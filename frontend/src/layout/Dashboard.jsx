@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, NavLink, Navigate } from "react-router-dom";
+import { Outlet, NavLink, Navigate, useNavigate } from "react-router-dom";
 import {
   UserSVG,
   ProductSVG,
@@ -32,7 +32,13 @@ const UserDropdownItems = [
 ];
 
 function Dashboard() {
+  const navigate = useNavigate();
   const token = localStorage.getItem("access_token");
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
   return token ? (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-[50px]">
       <div className="flex gap-[10px] min-h-dvh">
@@ -54,7 +60,10 @@ function Dashboard() {
             </NavLink>
           ))}
           <div className="border-t border-gray-200 mt-2 pt-2">
-            <button className="border border-gray-200 bg-gray-100 flex w-full items-center gap-2 px-4 py-2 mt-[50px] text-sm text-gray-700 hover:bg-[#0f1c3c] hover:text-white hover:text-[#0f1c3c] transition-colors rounded-md mx-1 rounded-md mx-1">
+            <button
+              onClick={handleLogout}
+              className="border border-gray-200 bg-gray-100 flex w-full items-center gap-2 px-4 py-2 mt-[50px] text-sm text-gray-700 hover:bg-[#0f1c3c] hover:text-white hover:text-[#0f1c3c] transition-colors rounded-md mx-1 rounded-md mx-1"
+            >
               <LogoutSVG />
               Logout
             </button>

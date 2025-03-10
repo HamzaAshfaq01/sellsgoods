@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Dropdown from "./Dropdown";
 import {
   LogoSVG,
@@ -58,8 +58,19 @@ const cartItems = [
 const userInfo = { name: "John Doe", isAdmin: true };
 
 export default function Sidebar({ isMenuOpen, closeMenu }) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
   const LogoutButton = (
-    <button className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-[#0f1c3c] hover:text-white hover:text-[#0f1c3c] transition-colors rounded-md mx-1 rounded-md mx-1">
+    <button
+      onClick={handleLogout}
+      className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-[#0f1c3c] hover:text-white hover:text-[#0f1c3c] transition-colors rounded-md mx-1 rounded-md mx-1"
+    >
       <LogoutSVG />
       Logout
     </button>
