@@ -237,7 +237,7 @@ export default function Header() {
               </div>
             ) : (
               <Link
-                href="/login"
+                to="/login"
                 className="flex items-center gap-2 text-white py-2 px-4 rounded-full bg-[#0f1c3c] hover:bg-[#0f1c3c]/90 transition-colors"
               >
                 <UserSVG />
