@@ -90,8 +90,8 @@ function Dashboard() {
   };
   return token ? (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-[50px]">
-      <div className="flex gap-[10px] min-h-dvh">
-        <div className="w-[30%] bg-white border border-gray-200 shadow-xs px-4 pt-[40px] py-[10px] flex flex-col gap-[10px]">
+      <div className="flex flex-col lg:flex-row gap-[10px] min-h-dvh">
+        <div className="w-full lg:w-[30%] flex flex-row items-center lg:items-stretch lg:flex-col bg-white border border-gray-200 shadow-xs px-4 lg:pt-[40px] py-[10px] gap-[10px]">
           {MenuItems.map((item, index) => (
             <NavLink
               key={index}
@@ -108,17 +108,17 @@ function Dashboard() {
               {item.label}
             </NavLink>
           ))}
-          <div className="border-t border-gray-200 mt-2 pt-2">
+          <div className="lg:border-t lg:border-gray-200 lg:mt-2 lg:pt-2">
             <button
               onClick={handleLogout}
-              className="border border-gray-200 bg-gray-100 flex w-full items-center gap-2 px-4 py-2 mt-[50px] text-sm text-gray-700 hover:bg-[#0f1c3c] hover:text-white hover:text-[#0f1c3c] transition-colors rounded-md mx-1 rounded-md mx-1"
+              className="border border-gray-200 bg-gray-100 flex w-full items-center gap-2 px-4 py-2 lg:mt-[50px] text-sm text-gray-700 hover:bg-[#0f1c3c] hover:text-white hover:text-[#0f1c3c] transition-colors rounded-md mx-1 rounded-md mx-1"
             >
               <LogoutSVG />
               Logout
             </button>
           </div>
         </div>
-        <div className="w-[70%] bg-white border border-gray-200 shadow-xs p-4">
+        <div className="w-full lg:w-[70%] bg-white border border-gray-200 shadow-xs p-4">
           <Outlet />
         </div>
       </div>
