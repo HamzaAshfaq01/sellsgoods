@@ -5,7 +5,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import DashboardLayout from "./layout/dashboard";
+import DashboardLayout from "./layout/Dashboard";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import SignIn from "./pages/SignIn";
