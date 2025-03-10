@@ -19,24 +19,24 @@ import {
 const UserDropdownItems = [
   {
     label: "Profile",
-    href: "/profile",
+    href: "/dashboard/profile",
     icon: <UserSVG />,
   },
   {
     label: "Products",
-    href: "/admin/productlist",
+    href: "/dashboard/products",
     icon: <ProductSVG />,
   },
-  {
-    label: "Orders",
-    href: "/admin/orderlist",
-    icon: <OrderSVG />,
-  },
-  {
-    label: "Users",
-    href: "/admin/userlist",
-    icon: <UsersSVG />,
-  },
+  // {
+  //   label: "Orders",
+  //   href: "/admin/orderlist",
+  //   icon: <OrderSVG />,
+  // },
+  // {
+  //   label: "Users",
+  //   href: "/admin/userlist",
+  //   icon: <UsersSVG />,
+  // },
 ];
 
 const categories = [

@@ -1,15 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import DashboardLayout from "./layout/dashboard";
 import Header from "./components/Header";
 import Home from "./pages/Home";
-// import ProductList from './pages/ProductList';
-// import ProductDetails from './pages/ProductDetails';
-// import AdminPanel from './pages/AdminPanel';
-// import SellerDashboard from './pages/SellerDashboard';
-// import BuyerDashboard from './pages/BuyerDashboard';
 import SignIn from "./pages/SignIn";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/dashboard/Dashboard";
+import Profile from "./pages/dashboard/Profile";
+import ProductListScreen from "./pages/dashboard/Products";
+import AddProductScreen from "./pages/dashboard/AddProduct";
+import EditProductScreen from "./pages/dashboard/EditProduct";
 
 function App() {
   return (
@@ -17,13 +18,15 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        {/* <Route path="/products" element={<ProductList />} />
-        <Route path="/products/:id" element={<ProductDetails />} />
-        <Route path="/admin" element={<AdminPanel />} />
-        <Route path="/seller-dashboard" element={<SellerDashboard />} />
-        <Route path="/buyer-dashboard" element={<BuyerDashboard />} /> */}
         <Route path="/login" element={<SignIn />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/dashboard/*" element={<DashboardLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="products" element={<ProductListScreen />} />
+          <Route path="products/add" element={<AddProductScreen />} />
+          <Route path="products/:id/edit" element={<EditProductScreen />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
       <ToastContainer

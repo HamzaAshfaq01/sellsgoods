@@ -1,12 +1,37 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "../axios";
 
 const LoginScreen = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await axios.post("/users/login", {
+        email,
+        password,
+      });
+      toast.success("User successfully loggedin");
+      navigate("/dashboard/profile");
+      localStorage.setItem("access_token", JSON.stringify(response.data.token));
+      localStorage.setItem("user", JSON.stringify(response.data));
+    } catch (error) {
+      if (error.response) {
+        toast.error(error.response.data.message || "Registration failed.");
+      } else if (error.request) {
+        toast.error("No response from server. Please try again.");
+      } else {
+        toast.error("Error occurred while making the request.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -53,9 +78,10 @@ const LoginScreen = () => {
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-[#0f1c3c] text-white py-2 px-4 rounded-lg cursor-pointer transition-all hover:bg-[#162b5b]"
           >
-            Sign In
+            {loading ? "Loading...." : "Sign In"}
           </button>
         </form>
 

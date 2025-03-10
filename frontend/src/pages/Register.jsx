@@ -1,14 +1,41 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "../axios";
 
 const LoginScreen = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [role, setRole] = useState("buyer");
+  const [loading, setLoading] = useState(false);
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    try {
+      await axios.post("/users", {
+        name,
+        email,
+        password,
+        phone,
+        role,
+      });
+      toast.success("User successfully registered");
+      navigate("/login");
+    } catch (error) {
+      if (error.response) {
+        toast.error(error.response.data.message || "Registration failed.");
+      } else if (error.request) {
+        toast.error("No response from server. Please try again.");
+      } else {
+        toast.error("Error occurred while making the request.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -30,6 +57,23 @@ const LoginScreen = () => {
               placeholder="Enter name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label
+              className="text-sm font-medium text-gray-700"
+              htmlFor="email"
+            >
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              id="phoneNo"
+              className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-500 focus:outline-none  border border-gray-200 transition-all"
+              placeholder="Enter phone number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
             />
           </div>
 
@@ -74,8 +118,8 @@ const LoginScreen = () => {
             </span>
             <div className="flex justify-between gap-4">
               <label
-                className={`flex items-center gap-2 cursor-pointer bg-gray-100 border  rounded-lg p-3 w-full hover:bg-gray-200 transition-all ${
-                  role === "buyer" ? "border-[#0f1c3c]" : "border-gray-200"
+                className={`flex items-center gap-2 cursor-pointer bg-gray-100 border-2  rounded-lg p-3 w-full hover:bg-gray-200 transition-all ${
+                  role === "buyer" ? " border-[#0f1c3c]" : "border-gray-200"
                 }`}
               >
                 <input
@@ -97,7 +141,7 @@ const LoginScreen = () => {
               </label>
 
               <label
-                className={`flex items-center gap-2 cursor-pointer bg-gray-100 border  rounded-lg p-3 w-full hover:bg-gray-200 transition-all ${
+                className={`flex items-center gap-2 cursor-pointer bg-gray-100 border-2  rounded-lg p-3 w-full hover:bg-gray-200 transition-all ${
                   role === "seller" ? "border-[#0f1c3c]" : "border-gray-200"
                 }`}
               >
@@ -123,9 +167,10 @@ const LoginScreen = () => {
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-[#0f1c3c] text-white py-2 px-4 rounded-lg cursor-pointer transition-all hover:bg-[#162b5b]"
           >
-            Register
+            {loading ? "Loading...." : "Register"}
           </button>
         </form>
 
