@@ -91,7 +91,7 @@ function Dashboard() {
   return token ? (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-[50px]">
       <div className="flex flex-col lg:flex-row gap-[10px] min-h-dvh">
-        <div className="w-full lg:w-[30%] flex flex-row items-center lg:items-stretch lg:flex-col bg-white border border-gray-200 shadow-xs px-4 lg:pt-[40px] py-[10px] gap-[10px] overscroll-x-auto">
+        <div className="w-full lg:w-[30%] flex flex-row items-center lg:items-stretch lg:flex-col bg-white border border-gray-200 shadow-xs px-4 lg:pt-[40px] py-[10px] gap-[10px] overflow-x-auto">
           {MenuItems.map((item, index) => (
             <NavLink
               key={index}
