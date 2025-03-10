@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import DashboardLayout from "./layout/dashboard";
 import Header from "./components/Header";
@@ -17,11 +22,11 @@ function App() {
     <Router>
       <Header />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<SignIn />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard/*" element={<DashboardLayout />}>
-          <Route index element={<Dashboard />} />
+          <Route index element={<Navigate to="/dashboard/profile" replace />} />
           <Route path="profile" element={<Profile />} />
           <Route path="products" element={<ProductListScreen />} />
           <Route path="products/add" element={<AddProductScreen />} />
