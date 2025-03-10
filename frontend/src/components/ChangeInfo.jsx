@@ -9,7 +9,8 @@ function ChangeInfo() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("user"));
+    const userData =
+      localStorage.getItem("user") && JSON.parse(localStorage.getItem("user"));
     if (userData) {
       setName(userData.name || "");
       setEmail(userData.email || "");
@@ -31,7 +32,9 @@ function ChangeInfo() {
         setName(response.data.name);
         setEmail(response.data.email);
         setPhone(response.data.phone);
-        const userData = JSON.parse(localStorage.getItem("user"));
+        const userData =
+          localStorage.getItem("user") &&
+          JSON.parse(localStorage.getItem("user"));
         localStorage.setItem(
           "user",
           JSON.stringify({

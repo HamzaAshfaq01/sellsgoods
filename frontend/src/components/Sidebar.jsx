@@ -16,7 +16,7 @@ import {
   LogoutSVG,
 } from "../assets/svg/index";
 
-const UserDropdownItems = [
+const AdminDropdownItems = [
   {
     label: "Profile",
     href: "/dashboard/profile",
@@ -29,12 +29,51 @@ const UserDropdownItems = [
   },
   // {
   //   label: "Orders",
-  //   href: "/admin/orderlist",
+  //   href: "/dashboard/orderlist",
   //   icon: <OrderSVG />,
   // },
   // {
   //   label: "Users",
-  //   href: "/admin/userlist",
+  //   href: "/dashboard/userlist",
+  //   icon: <UsersSVG />,
+  // },
+];
+const SellerDropdownItems = [
+  {
+    label: "Profile",
+    href: "/dashboard/profile",
+    icon: <UserSVG />,
+  },
+  {
+    label: "Products",
+    href: "/dashboard/products",
+    icon: <ProductSVG />,
+  },
+  // {
+  //   label: "Orders",
+  //   href: "/dashboard/orderlist",
+  //   icon: <OrderSVG />,
+  // },
+  // {
+  //   label: "Users",
+  //   href: "/dashboard/userlist",
+  //   icon: <UsersSVG />,
+  // },
+];
+const BuyerDropdownItems = [
+  {
+    label: "Profile",
+    href: "/dashboard/profile",
+    icon: <UserSVG />,
+  },
+  // {
+  //   label: "Orders",
+  //   href: "/dashboard/orderlist",
+  //   icon: <OrderSVG />,
+  // },
+  // {
+  //   label: "Users",
+  //   href: "/dashboard/userlist",
   //   icon: <UsersSVG />,
   // },
 ];
@@ -51,14 +90,23 @@ const categories = [
 ];
 
 const cartItems = [
-  { id: 1, qty: 2 },
-  { id: 2, qty: 1 },
+  // { id: 1, qty: 2 },
+  // { id: 2, qty: 1 },
 ];
 
 const userInfo = { name: "John Doe", isAdmin: true };
 
 export default function Sidebar({ isMenuOpen, closeMenu }) {
+  const userInfo =
+    localStorage.getItem("user") && JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
+
+  const DropDownMenu =
+    userInfo?.role == "admin"
+      ? AdminDropdownItems
+      : userInfo?.role == "seller"
+      ? SellerDropdownItems
+      : BuyerDropdownItems;
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
@@ -151,9 +199,9 @@ export default function Sidebar({ isMenuOpen, closeMenu }) {
           {userInfo ? (
             <div className="relative">
               <Dropdown
-                label={userInfo.name}
+                label={userInfo?.name}
                 icon={<UserSVG />}
-                items={UserDropdownItems}
+                items={DropDownMenu}
                 actionButton={LogoutButton}
               />
             </div>

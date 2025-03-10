@@ -8,7 +8,7 @@ import {
   LogoutSVG,
 } from "../assets/svg/index";
 
-const UserDropdownItems = [
+const AdminDropdownItems = [
   {
     label: "Profile",
     href: "/dashboard/profile",
@@ -30,10 +30,59 @@ const UserDropdownItems = [
   //   icon: <UsersSVG />,
   // },
 ];
+const SellerDropdownItems = [
+  {
+    label: "Profile",
+    href: "/dashboard/profile",
+    icon: <UserSVG />,
+  },
+  {
+    label: "Products",
+    href: "/dashboard/products",
+    icon: <ProductSVG />,
+  },
+  // {
+  //   label: "Orders",
+  //   href: "/dashboard/orderlist",
+  //   icon: <OrderSVG />,
+  // },
+  // {
+  //   label: "Users",
+  //   href: "/dashboard/userlist",
+  //   icon: <UsersSVG />,
+  // },
+];
+const BuyerDropdownItems = [
+  {
+    label: "Profile",
+    href: "/dashboard/profile",
+    icon: <UserSVG />,
+  },
+  // {
+  //   label: "Orders",
+  //   href: "/dashboard/orderlist",
+  //   icon: <OrderSVG />,
+  // },
+  // {
+  //   label: "Users",
+  //   href: "/dashboard/userlist",
+  //   icon: <UsersSVG />,
+  // },
+];
 
 function Dashboard() {
+  const userInfo =
+    localStorage.getItem("user") && JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
   const token = localStorage.getItem("access_token");
+
+  const MenuItems =
+    userInfo?.role == "admin"
+      ? AdminDropdownItems
+      : userInfo?.role == "seller"
+      ? SellerDropdownItems
+      : BuyerDropdownItems;
+
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user");
@@ -43,7 +92,7 @@ function Dashboard() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-[50px]">
       <div className="flex gap-[10px] min-h-dvh">
         <div className="w-[30%] bg-white border border-gray-200 shadow-xs px-4 pt-[40px] py-[10px] flex flex-col gap-[10px]">
-          {UserDropdownItems.map((item, index) => (
+          {MenuItems.map((item, index) => (
             <NavLink
               key={index}
               to={item.href}
