@@ -16,6 +16,7 @@ import Profile from "./pages/dashboard/Profile";
 import ProductListScreen from "./pages/dashboard/Products";
 import AddProductScreen from "./pages/dashboard/AddProduct";
 import EditProductScreen from "./pages/dashboard/EditProduct";
+import ViewProductScreen from "./pages/dashboard/ViewProduct";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="products" element={<ProductListScreen />} />
           <Route path="products/add" element={<AddProductScreen />} />
           <Route path="products/:id/edit" element={<EditProductScreen />} />
+          <Route path="products/:id/view" element={<ViewProductScreen />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
