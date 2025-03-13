@@ -29,6 +29,7 @@ const AddProductScreen = () => {
     },
     images: [],
   });
+  const [tagInput, setTagInput] = useState("");
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -66,6 +67,22 @@ const AddProductScreen = () => {
   const handleConditionChange = (e) => {
     const { value } = e.target;
     setFormData((prev) => ({ ...prev, condition: value }));
+  };
+  const handleTagKeyDown = (e) => {
+    if (e.key === "Enter" && tagInput.trim() !== "") {
+      e.preventDefault();
+      if (!formData.tags.includes(tagInput.trim())) {
+        setFormData({ ...formData, tags: [...formData.tags, tagInput.trim()] });
+      }
+      setTagInput("");
+    }
+  };
+  
+  const handleRemoveTag = (index) => {
+    setFormData({
+      ...formData,
+      tags: formData.tags.filter((_, i) => i !== index),
+    });
   };
 
   const handleImageUpload = (e) => {
@@ -108,6 +125,8 @@ const AddProductScreen = () => {
           for (const [subKey, subValue] of Object.entries(value)) {
             formDataToSend.append(`${key}[${subKey}]`, subValue);
           }
+        } else if (key === "tags") {
+          value.forEach((tag) => formDataToSend.append("tags[]", tag));
         } else if (key !== "images") {
           formDataToSend.append(key, value);
         }
@@ -188,6 +207,40 @@ const AddProductScreen = () => {
                 required
               />
             </div>
+            <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Tags <span className="text-red-500">*</span>
+      </label>
+      <div className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-900 border border-gray-200 focus-within:border-[#0f1c3c] transition-all">
+        <div className="flex flex-wrap gap-2">
+        
+          {formData.tags.map((tag, index) => (
+            <div
+              key={index}
+              className="flex items-center bg-[#0f1c3c] text-white text-sm px-3 py-1 rounded-full"
+            >
+              {tag}
+              <button
+                type="button"
+                className="ml-2 text-white hover:text-gray-300"
+                onClick={() => handleRemoveTag(index)}
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+         
+          <input
+            type="text"
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={handleTagKeyDown}
+            className="flex-1 bg-transparent outline-none text-gray-900 placeholder-gray-500"
+            placeholder="Enter tags and press Enter"
+          />
+        </div>
+      </div>
+    </div>
 
             <div>
               <span className="block text-sm font-medium text-gray-700 mb-2">

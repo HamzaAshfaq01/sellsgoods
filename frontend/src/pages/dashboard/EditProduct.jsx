@@ -14,6 +14,7 @@ const EditProductScreen = () => {
   const [existingImages, setExistingImages] = useState([]);
   const [imagesToDelete, setImagesToDelete] = useState([]);
   const [newImagePreviews, setNewImagePreviews] = useState([]);
+  const [tagInput, setTagInput] = useState("");
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -100,7 +101,34 @@ const EditProductScreen = () => {
     const { value } = e.target;
     setFormData((prev) => ({ ...prev, condition: value }));
   };
-
+  const handleTagInputChange = (e) => {
+    setTagInput(e.target.value);
+  };
+  const handleAddTag = () => {
+    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
+      setFormData((prev) => ({
+        ...prev,
+        tags: [...prev.tags, tagInput.trim()],
+      }));
+      setTagInput(""); // Clear input field
+    }
+  };
+  
+  // Function to handle removing a tag
+  const handleRemoveTag = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((_, i) => i !== index),
+    }));
+  };
+  
+  // Function to handle Enter key for adding tags
+  const handleTagKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag();
+    }
+  };
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
     const totalImages =
@@ -153,6 +181,8 @@ const EditProductScreen = () => {
           for (const [subKey, subValue] of Object.entries(value)) {
             formDataToSend.append(`${key}[${subKey}]`, subValue);
           }
+        } else if (key === "tags") {
+          value.forEach((tag) => formDataToSend.append("tags[]", tag));
         } else if (key !== "newImages") {
           formDataToSend.append(key, value);
         }
@@ -243,6 +273,45 @@ const EditProductScreen = () => {
                 required
               />
             </div>
+            <div>
+  <label
+    className="block text-sm font-medium text-gray-700 mb-1"
+    htmlFor="tags"
+  >
+    Tags <span className="text-red-500">*</span>
+  </label>
+  <div className="relative">
+    <div className="flex flex-wrap gap-2 border border-gray-200 rounded-lg bg-gray-100 py-2 px-4 focus-within:border-[#0f1c3c] transition-all">
+      {formData.tags.map((tag, index) => (
+        <span
+          key={index}
+          className="flex items-center bg-[#0f1c3c] text-white text-sm px-3 py-1 rounded-full"
+        >
+          {tag}
+          <button
+            type="button"
+            onClick={() => handleRemoveTag(index)}
+            className="ml-2 text-xs text-white bg-gray-700 rounded-full w-4 h-4 flex items-center justify-center"
+          >
+            X
+          </button>
+        </span>
+      ))}
+      <input
+        type="text"
+        id="tags"
+        name="tags"
+        value={tagInput}
+        onChange={handleTagInputChange}
+        onKeyDown={handleTagKeyDown}
+        placeholder="Add tags (press Enter or comma)"
+        className="bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none w-full"
+      />
+    </div>
+  </div>
+</div>
+
+
 
             <div>
               <span className="block text-sm font-medium text-gray-700 mb-2">
