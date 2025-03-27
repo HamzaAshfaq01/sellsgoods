@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "../../axios";
+import { useCart } from "../../context/CartContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-const ProductViewPage = () => {
+const ProductDetail = () => {
   const [loggedInUser, setLoggedInUser] = useState({});
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const userData =
@@ -51,6 +56,37 @@ const ProductViewPage = () => {
   const selectImage = (index) => {
     setCurrentImageIndex(index);
   };
+  const { updateCart } = useCart();
+ 
+  
+  const addToCart = () => {
+    const cartItem = {
+      id: product._id,
+      title: product.title,
+      price: product.price,
+      image: product.images?.[0] || null,
+      sellerId: product.seller?._id,
+      quantity: 1,
+      addedAt: new Date().toISOString(),
+    };
+  
+    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingItemIndex = existingCart.findIndex(item => item.id === product._id);
+  
+    if (existingItemIndex !== -1) {
+      existingCart[existingItemIndex].quantity += 1;
+    } else {
+      existingCart.push(cartItem);
+    }
+  
+    localStorage.setItem("cart", JSON.stringify(existingCart));
+  
+    toast.success("Item added to cart! 🛒");
+    updateCart(existingCart);
+  
+    navigate("/cart");
+  };
+  
 
   if (loading) {
     return (
@@ -115,7 +151,7 @@ const ProductViewPage = () => {
         </h1>
         <div className="flex space-x-3">
           <Link
-            to="/dashboard/products"
+            to="/"
             className="flex items-center gap-2 bg-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors"
           >
             <svg
@@ -132,7 +168,7 @@ const ProductViewPage = () => {
             </svg>
             Back
           </Link>
-          {loggedInUser?._id === product?.seller?._id && (
+          {/* {loggedInUser?._id === product?.seller?._id && (
             <Link
               to={`/dashboard/products/${id}/edit`}
               className="flex items-center gap-2 bg-[#0f1c3c] text-white py-2 px-4 rounded-lg hover:bg-[#162b5b] transition-colors"
@@ -147,7 +183,7 @@ const ProductViewPage = () => {
               </svg>
               Edit Product
             </Link>
-          )}
+          )} */}
         </div>
       </div>
 
@@ -408,81 +444,99 @@ const ProductViewPage = () => {
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-2 text-[#0f1c3c]"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Seller Information
-            </h2>
-            <ul className="space-y-3">
-              <li className="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2 text-gray-500 mt-0.5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <div>
-                  <span className="block text-sm font-medium text-gray-700">
-                    Name
-                  </span>
-                  <span className="text-gray-600">{product.seller.name}</span>
-                </div>
-              </li>
-              <li className="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2 text-gray-500 mt-0.5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                </svg>
-                <div>
-                  <span className="block text-sm font-medium text-gray-700">
-                    Phone
-                  </span>
-                  <span className="text-gray-600">{product.contact.phone}</span>
-                </div>
-              </li>
-              <li className="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2 text-gray-500 mt-0.5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                </svg>
-                <div>
-                  <span className="block text-sm font-medium text-gray-700">
-                    Email
-                  </span>
-                  <span className="text-gray-600">{product.seller.email}</span>
-                </div>
-              </li>
-            </ul>
-          </div>
+  <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5 mr-2 text-[#0f1c3c]"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+        clipRule="evenodd"
+      />
+    </svg>
+    Seller Information
+  </h2>
+  <ul className="space-y-3">
+    <li className="flex items-start">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 mr-2 text-gray-500 mt-0.5"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fillRule="evenodd"
+          d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+          clipRule="evenodd"
+        />
+      </svg>
+      <div>
+        <span className="block text-sm font-medium text-gray-700">Name</span>
+        <span className="text-gray-600">{product.seller.name}</span>
+      </div>
+    </li>
+    <li className="flex items-start">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 mr-2 text-gray-500 mt-0.5"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+      </svg>
+      <div>
+        <span className="block text-sm font-medium text-gray-700">Phone</span>
+        <span className="text-gray-600">{product.contact.phone}</span>
+      </div>
+    </li>
+    <li className="flex items-start">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5 mr-2 text-gray-500 mt-0.5"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+      </svg>
+      <div>
+        <span className="block text-sm font-medium text-gray-700">Email</span>
+        <span className="text-gray-600">{product.seller.email}</span>
+      </div>
+    </li>
+  </ul>
+
+
+  <div className="mt-4 flex space-x-4">
+    <a
+      href={`tel:${product.contact.phone}`}
+      className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm text-center  font-medium hover:bg-blue-600 transition w-full"
+    >
+      Call Now
+    </a>
+    <a
+  href={`mailto:${product.contact?.email || ""}`}
+  className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm text-center font-medium hover:bg-green-600 transition w-full"
+>
+  Via Email
+</a>
+<a
+ onClick={addToCart}
+ 
+  className="bg-black text-white px-4 py-2 rounded-lg text-sm text-center font-medium hover:bg-black transition w-full"
+>
+  Order here
+</a>
+  </div>
+</div>
+
         </div>
       </div>
     </div>
   );
 };
 
-export default ProductViewPage;
+export default ProductDetail;

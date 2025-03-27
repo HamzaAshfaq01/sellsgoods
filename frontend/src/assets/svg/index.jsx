@@ -1,7 +1,7 @@
 const LogoSVG = () => (
   <svg
     className="h-5 w-5 sm:h-6 sm:w-6 text-white"
-    fill="none"
+    fill="black"
     stroke="currentColor"
     viewBox="0 0 24 24"
   >
@@ -163,6 +163,24 @@ const OrderSVG = () => (
     />
   </svg>
 );
+const CategoriesSVG = () => (
+  <svg
+    className="h-4 w-4"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M4 6h16M4 12h16M4 18h16"
+    />
+  </svg>
+);
+
+
+
 const UsersSVG = () => (
   <svg
     className="h-4 w-4"
@@ -207,4 +225,5 @@ export {
   OrderSVG,
   UsersSVG,
   LogoutSVG,
+  CategoriesSVG
 };

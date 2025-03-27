@@ -5,10 +5,12 @@ import {
   getCategoryById,
   updateCategory,
   deleteCategory,
+  getListingCategories
 } from "../controllers/categoryController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
+router.get("/listingCategories", getListingCategories);
 
 router.route("/").get(getAllCategories).post(protect, admin, createCategory);
 

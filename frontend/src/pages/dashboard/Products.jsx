@@ -3,37 +3,90 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "../../axios";
 import DeleteConfirmationModal from "../../components/DeleteConfirmation";
+import { FaSpinner } from "react-icons/fa";
 
 const ProductListScreen = () => {
+  
   const [loggedInUser, setLoggedInUser] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState({});
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const limit = pageSize;  
+  const totalItems = products.length;
+
+
+  
+  const currentProducts = products.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+
+ 
+  const handlePageChange = async (page) => {
+    if (page >= 1 && page <= totalPages) {
+      
+      setCurrentPage(page); 
+      
+    }
+  };
+  
+
+  const fetchProducts = async (currentPage, limit) => {
+    try {
+      let response;
+      const userData =
+        localStorage.getItem("user") &&
+        JSON.parse(localStorage.getItem("user"));
+      setLoggedInUser(userData);
+  
+      const params = {
+        page: currentPage,
+        limit: limit,
+      };
+  
+      if (userData?.role === "seller" && userData?.isAdmin === false) {
+        response = await axios.get("/products/seller", { params });
+      } else {
+        response = await axios.get("/products", { params });
+      }
+  
+      if (response.status === 200) {
+        setProducts(response.data.products);
+        setTotalPages(response.data.totalPages);
+        return response.data;
+      }
+    } catch (error) {
+      console.log("Error while fetching products", error);
+      return null; 
+    }finally{
+      setLoading(false);
+    }
+  };
+  
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        let response;
-        const userData =
-          localStorage.getItem("user") &&
-          JSON.parse(localStorage.getItem("user"));
-        setLoggedInUser(userData);
-        if (userData?.role == "seller" && userData?.isAdmin == false) {
-          response = await axios.get("/products/seller");
-        } else {
-          response = await axios.get("/products");
-        }
-        if (response.status == 200) {
-          setProducts(response?.data);
-        }
-      } catch (error) {
-        console.log("Error while fetching products", error);
-      }
-    };
-    fetchProducts();
-  }, []);
+    console.log(`Fetching products - Page: ${currentPage}, Limit: ${limit}`);
+    
+    fetchProducts(currentPage, limit)
+      .then(response => {
+        console.log("API Response:", response); 
+      })
+      .catch(error => {
+        console.error("Error fetching products:", error);
+      });
+  }, [currentPage, limit]);
+  
+  
 
   const nextImage = (productId) => {
     setCurrentImageIndex((prev) => {
@@ -99,9 +152,80 @@ const ProductListScreen = () => {
       closeDeleteModal();
     }
   };
+  const Pagination = () => {
+    const totalButtons = 5; 
+    const getPageNumbers = () => {
+      let start = Math.max(1, currentPage - Math.floor(totalButtons / 2));
+      let end = Math.min(totalPages, start + totalButtons - 1);
+  
+      if (end - start < totalButtons - 1) {
+        start = Math.max(1, end - totalButtons + 1);
+      }
+  
+      let pages = [];
+      if (start > 1) pages.push(1);
+      if (start > 2) pages.push("...");
+  
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+  
+      if (end < totalPages - 1) pages.push("...");
+      if (end < totalPages) pages.push(totalPages);
+  
+      return pages;
+    };
+  
+    return (
+      <div className="flex justify-center items-center space-x-2 mt-10 mb-4">
+      <button
+  className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+    currentPage === 1 || loading ? "bg-none text-gray-500 cursor-not-allowed" : "bg-none text-[#0f1c3c] hover:bg-[#0f1c3c] hover:text-gray-300 cursor-pointer"
+  }`}
+  disabled={currentPage === 1 || loading}
+  onClick={() => handlePageChange(currentPage - 1)}
+>
+  &lt;
+</button>
+
+{getPageNumbers().map((page, index) => (
+  <button
+    key={index}
+    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+      currentPage === page
+        ? "bg-[#0f1c3c] text-white font-bold cursor-pointer"
+        : "bg-gray-200 cursor-pointer hover:bg-gray-300"
+    } ${page === "..." ? "cursor-pointer text-gray-500 bg-transparent" : ""}`}
+    onClick={() => page !== "..." && handlePageChange(page)}
+    disabled={page === "..." || loading}
+  >
+    {loading && currentPage === page ? (
+      <span className="animate-spin">...</span> 
+    ) : (
+      page
+    )}
+  </button>
+))}
+
+<button
+  className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+    currentPage === totalPages || loading ? "bg-none text-gray-500 cursor-not-allowed" : "bg-none text-[#0f1c3c] hover:bg-[#0f1c3c] hover:text-gray-300 cursor-pointer"
+  }`}
+  disabled={currentPage === totalPages || loading}
+  onClick={() => handlePageChange(currentPage + 1)}
+>
+  &gt;
+</button>
+      </div>
+    );
+    
+  };
+  
 
   return (
+    
     <React.Fragment>
+      
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Products</h1>
         <Link
@@ -125,6 +249,11 @@ const ProductListScreen = () => {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-gray-200">
+      {loading  ? (
+        <div className="flex justify-center items-center my-4">
+          <FaSpinner className="animate-spin text-4xl text-[#0f1c3c]" />
+        </div>
+      ) : (
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -172,6 +301,7 @@ const ProductListScreen = () => {
               </th>
             </tr>
           </thead>
+          
           <tbody className="bg-white divide-y divide-gray-200">
             {products.map((product) => (
               <tr key={product._id} className="hover:bg-gray-50">
@@ -366,6 +496,15 @@ const ProductListScreen = () => {
             ))}
           </tbody>
         </table>
+)}
+
+        <Pagination
+  current={currentPage}
+  pageSize={pageSize}
+  total={totalItems}
+  onChange={(page) => setCurrentPage(page)}
+/>
+
         {productToDelete && (
           <DeleteConfirmationModal
             isOpen={deleteModalOpen}

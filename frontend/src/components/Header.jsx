@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Dropdown from "./Dropdown";
+import axios from "../axios";
 import Sidebar from "./Sidebar";
 import {
   LogoSVG,
@@ -17,6 +18,10 @@ import {
   UsersSVG,
   LogoutSVG,
 } from "../assets/svg/index";
+import { useCart } from "../context/CartContext";
+
+
+
 
 const AdminDropdownItems = [
   {
@@ -79,30 +84,27 @@ const BuyerDropdownItems = [
   //   icon: <UsersSVG />,
   // },
 ];
-
-const categories = [
-  "Electronics",
-  "Clothing",
-  "Home & Kitchen",
-  "Beauty & Personal Care",
-  "Books",
-  "Sports & Outdoors",
-  "Toys & Games",
-  "Health & Wellness",
-];
-
 const cartItems = [
   // { id: 1, qty: 2 },
   // { id: 2, qty: 1 },
 ];
 
+
+
 export default function Header() {
   const userInfo =
     localStorage.getItem("user") && JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
   const [scrolled, setScrolled] = useState(false);
 
+  const { cart } = useCart(); 
+  const hasItems = cart?.length > 0;
+  const totalItems = cart.reduce((total, item) => total + (item.quantity || 0), 0);
   const DropDownMenu =
     userInfo?.role == "admin"
       ? AdminDropdownItems
@@ -122,21 +124,37 @@ export default function Header() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        isMenuOpen &&
-        !event.target.closest(".mobile-menu") &&
-        !event.target.closest(".menu-toggle")
-      ) {
-        setIsMenuOpen(false);
+    const fetchCategories = async () => {
+      try {
+        const { data } = await axios.get("/category"); // Replace with actual API endpoint
+        setCategories(data); // Assuming API returns an array of category names
+      } catch (error) {
+        console.error("Error fetching categories:", error);
       }
     };
 
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (window.innerWidth >= 1024) {
+      
+        if (
+          isMenuOpen &&
+          !event.target.closest(".mobile-menu") &&
+          !event.target.closest(".menu-toggle")
+        ) {
+          setIsMenuOpen(false);
+        }
+      }
+    };
+  
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [isMenuOpen]);
+  
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
@@ -154,6 +172,29 @@ export default function Header() {
     </button>
   );
 
+  useEffect(() => {
+    if (searchQuery.length < 2) {
+      setSearchResults([]);
+      setIsDropdownOpen(false);
+      return;
+    }
+
+    const fetchProducts = async () => {
+      try {
+        const { data } = await axios.get(`/products/search?query=${searchQuery}`);
+
+        setSearchResults(data); 
+        setIsDropdownOpen(true);
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+      }
+    };
+
+    const debounce = setTimeout(fetchProducts, 300); 
+
+    return () => clearTimeout(debounce);
+  }, [searchQuery]);
+
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-300 border-b border-gray-200 ${
@@ -166,13 +207,13 @@ export default function Header() {
             href="/"
             className="flex items-center gap-3 transition-transform hover:scale-105"
           >
-            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-[#0f1c3c] rounded-full overflow-hidden shadow-sm flex items-center justify-center">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-[c] rounded-full overflow-hidden shadow-sm flex items-center justify-center">
               <LogoSVG />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl sm:text-2xl font-bold tracking-tight text-[#0f1c3c]">
-                Sells&Goods
-              </span>
+            <Link to="/" className="text-xl sm:text-2xl font-bold tracking-tight text-[#0f1c3c] cursor-pointer">
+    Sells&Goods
+  </Link>
             </div>
           </Link>
 
@@ -193,11 +234,10 @@ export default function Header() {
                 label="Categories"
                 icon={<CategorySVG />}
                 items={categories?.map((category) => ({
-                  label: category,
-                  href: `/category/${category
-                    .toLowerCase()
-                    .replace(/\s+/g, "-")}`,
+                  label: category.name, 
+  href: `/category/${category.name.toLowerCase().replace(/\s+/g, "-")}`,
                   adminOnly: false,
+                  
                 }))}
               />
             </div>
@@ -207,24 +247,53 @@ export default function Header() {
                 <SearchSVG />
               </div>
               <input
-                type="search"
-                placeholder="Search products by name or category..."
-                className="pl-10 w-full py-2 px-4 rounded-full bg-gray-100 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#0f1c3c]/50 focus:bg-white border border-gray-200 transition-all"
-              />
+        type="search"
+        placeholder="Search products..."
+        className="pl-10 w-full py-2 px-4 rounded-full bg-gray-100 text-gray-900 focus:ring-2 focus:ring-[#0f1c3c]/50 border border-gray-200"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+
+      {/* Dropdown for search results */}
+      {isDropdownOpen && searchResults.length > 0 && (
+        <div className="absolute w-full mt-1 bg-white border border-gray-300 shadow-lg rounded-lg z-50">
+          {searchResults.map((product) => (
+            <div
+              key={product.id}
+              className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
+              onClick={() => navigate(`/productdetails/${product._id}/view`)}
+            >
+              <img
+                  src={
+                    import.meta.env.VITE_API_SERVER_UPLOADS +
+                      product.images || "/placeholder.svg"
+                  }
+                  alt={product.title}
+                  className="w-10 h-10 object-contain"
+                />
+
+              <span className="text-gray-800">{product.title}</span>
+            </div>
+          ))}
+        </div>
+      )}
+  
+  
             </div>
 
-            <Link
-              href="/cart"
-              className="flex items-center gap-2 text-gray-700 hover:text-[#0f1c3c] py-2 px-4 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-            >
-              <CartSVG />
-              <span>Cart</span>
-              {cartItems.length > 0 && (
-                <span className="bg-[#0f1c3c] text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
-                  {cartItems.reduce((a, c) => a + c.qty, 0)}
-                </span>
-              )}
-            </Link>
+            <button
+      onClick={() => navigate("/cart")}
+      className={`flex items-center gap-2 py-2 px-4 rounded-full transition-colors cursor-pointer
+        ${hasItems ? "bg-[#0f1c3c] text-white hover:bg-gray-800" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+    >
+      <CartSVG />
+      <span>Cart</span>
+      {hasItems && (
+        <span className="bg-red-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
+          {totalItems}
+        </span>
+      )}
+    </button>
 
             {userInfo ? (
               <div className="relative">

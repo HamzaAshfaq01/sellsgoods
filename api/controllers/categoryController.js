@@ -1,5 +1,6 @@
 import asyncHandler from "../middleware/asyncHandler.js";
 import Category from "../models/categoryModel.js";
+import mongoose from "mongoose";
 
 const createCategory = asyncHandler(async (req, res) => {
   try {
@@ -70,19 +71,55 @@ const updateCategory = asyncHandler(async (req, res) => {
 
 const deleteCategory = asyncHandler(async (req, res) => {
   try {
-    const category = await Category.findById(req.params.id);
+    const { id } = req.params;
+
+   
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid category ID" });
+    }
+
+    const category = await Category.findById(id);
 
     if (!category) {
       return res.status(404).json({ message: "Category not found" });
     }
 
-    await category.remove();
-    res.status(200).json({ message: "Category deleted" });
+  
+    await Category.deleteOne({ _id: id });
+
+    res.status(200).json({ message: "Category deleted successfully" });
+  } catch (error) {
+    console.error("Delete Category Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+const getListingCategories = asyncHandler(async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;  
+    const limit = parseInt(req.query.limit) || 10; 
+    const skip = (page - 1) * limit;
+
+ 
+    const categories = await Category.find({}, { name: 1, createdAt: 1 })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+
+    const totalCount = await Category.countDocuments();
+
+    res.status(200).json({
+      categories,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: page,
+      totalItems: totalCount,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message || "Server error" });
   }
 });
+
 
 export {
   createCategory,
@@ -90,4 +127,5 @@ export {
   getCategoryById,
   updateCategory,
   deleteCategory,
+  getListingCategories
 };
