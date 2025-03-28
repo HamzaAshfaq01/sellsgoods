@@ -65,6 +65,7 @@ const OrderSchema = new mongoose.Schema({
     enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
     default: 'Pending',
   },
+  
   createdAt: {
     type: Date,
     default: Date.now,
@@ -80,6 +81,7 @@ const OrderSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+
 });
 
 const Order = mongoose.model("Order", OrderSchema);

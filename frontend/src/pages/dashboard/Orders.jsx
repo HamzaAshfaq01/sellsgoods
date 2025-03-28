@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "../../axios"
+import axios from "../../axios";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import DeleteConfirmationModal from "../../components/DeleteConfirmation";
@@ -19,7 +19,12 @@ const OrdersListScreen = () => {
     const fetchOrders = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.get("/orders");
+            const user = JSON.parse(localStorage.getItem("user")); 
+            const isAdmin = user?.isAdmin; 
+    
+            const endpoint = isAdmin ? "/orders/getallorders" : "/orders"; 
+    
+            const { data } = await axios.get(endpoint);
             setOrders(data);
         } catch (error) {
             console.error("Error fetching orders:", error);
@@ -28,7 +33,7 @@ const OrdersListScreen = () => {
             setLoading(false);
         }
     };
-
+    
     const handleDeleteConfirm = async () => {
         if (!orderToDelete) return;
         setIsDeleting(true);

@@ -235,7 +235,7 @@ export default function Header() {
                 icon={<CategorySVG />}
                 items={categories?.map((category) => ({
                   label: category.name, 
-  href: `/category/${category.name.toLowerCase().replace(/\s+/g, "-")}`,
+  href: `/category/${category.name.replace(/\s+/g, "-")}?categories=${encodeURIComponent(category.name)}`,
                   adminOnly: false,
                   
                 }))}

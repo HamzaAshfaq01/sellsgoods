@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../../axios";
 
-const ProductCard = ({selectedCategory}) => {
+const ProductCard = () => {
   const [categories, setCategories] = useState([]);
   const [productsByCategory, setProductsByCategory] = useState({});
   const [loading, setLoading] = useState(true);
@@ -89,7 +89,7 @@ const ProductCard = ({selectedCategory}) => {
             className="mb-8"
           >
             <h2 className="text-xl font-bold mb-4">{category}</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {productsByCategory[category]?.slice(0, 4).map((product) => (
                 <div
                   key={product.id || product._id}
@@ -170,7 +170,7 @@ const ProductCard = ({selectedCategory}) => {
             {productsByCategory[category]?.length > 4 && (
               <button
                 onClick={() => navigate(`/category/${category}?categories=${encodeURIComponent(category)}`)}
-                className="mt-4 px-4 py-2 bg-[#0f1c3c] text-white font-semibold rounded-lg hover:bg-[#122850] transition"
+                className="mt-4 px-4 py-2 bg-[#0f1c3c] text-white font-semibold rounded-lg hover:bg-[#122850] transition cursor-pointer"
               >
                 See More
               </button>

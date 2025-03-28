@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "../../axios";
 import { toast } from "react-toastify";
+import { Progress } from "antd";
 
 const EditOrderScreen = () => {
   const { id } = useParams();
@@ -10,7 +11,7 @@ const EditOrderScreen = () => {
   const [formData, setFormData] = useState({
     status: "",
     cancelReason: "",
-    name: "",
+    customerName: "",
     email: "",
     phoneNumber: "",
     address: "",
@@ -19,7 +20,6 @@ const EditOrderScreen = () => {
   const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
-    // Fetch role from localStorage
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser && storedUser.role) {
       setRole(storedUser.role);
@@ -28,14 +28,13 @@ const EditOrderScreen = () => {
       return;
     }
 
-    // Fetch existing order details
     const fetchOrder = async () => {
       try {
         const { data } = await axios.get(`/orders/${id}`);
         setFormData({
           status: data.status || "Pending",
           cancelReason: data.cancelReason || "",
-          name: data.name || "",
+          name: data.customerName || "",
           email: data.email || "",
           phoneNumber: data.phoneNumber || "",
           address: data.address || "",
@@ -69,6 +68,22 @@ const EditOrderScreen = () => {
     }
   };
 
+  const statusSteps = {
+    Pending: 0,
+    Processing: 25,
+    Shipped: 50,
+    Delivered: 100,
+    Cancelled: 100,
+  };
+
+  const statusColor = {
+    Pending: "#fadb14",
+    Processing: "#1890ff",
+    Shipped: "#722ed1",
+    Delivered: "#52c41a",
+    Cancelled: "#f5222d",
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Edit Order</h1>
@@ -89,6 +104,7 @@ const EditOrderScreen = () => {
                 className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-900 focus:outline-none border border-gray-200 transition-all focus:border-[#0f1c3c]"
               >
                 <option value="Pending">Pending</option>
+                <option value="Processing">Processing</option>
                 <option value="Shipped">Shipped</option>
                 <option value="Delivered">Delivered</option>
                 <option value="Cancelled">Cancelled</option>
@@ -103,6 +119,7 @@ const EditOrderScreen = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
+                  disabled={formData.status !== "Pending"}
                   className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-900 border border-gray-200 focus:outline-none transition-all focus:border-[#0f1c3c]"
                 />
               </div>
@@ -114,33 +131,32 @@ const EditOrderScreen = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
+                  disabled={formData.status !== "Pending"}
                   className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-900 border border-gray-200 focus:outline-none transition-all focus:border-[#0f1c3c]"
                 />
               </div>
-
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
-                  type="text"
-                  name="phoneNumber"
+                  type="email"
+                  name="email"
                   value={formData.phoneNumber}
                   onChange={handleInputChange}
-                  className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-900 border border-gray-200 focus:outline-none transition-all focus:border-[#0f1c3c]"
-                />
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
+                  disabled={formData.status !== "Pending"}
                   className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-900 border border-gray-200 focus:outline-none transition-all focus:border-[#0f1c3c]"
                 />
               </div>
             </>
           )}
+
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Order Progress</label>
+            <Progress 
+              percent={statusSteps[formData.status]} 
+              strokeColor={statusColor[formData.status]} 
+              showInfo={true} 
+            />
+          </div>
 
           {formData.status === "Cancelled" && role === "seller" && (
             <div className="mb-6">
@@ -152,6 +168,18 @@ const EditOrderScreen = () => {
                 className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-900 border border-gray-200 focus:outline-none transition-all focus:border-[#0f1c3c]"
                 placeholder="Enter cancellation reason"
               />
+            </div>
+          )}
+
+          {role === "buyer" && formData.status === "Pending" && (
+            <div className="mb-6 flex justify-end">
+              <button
+                type="button"
+                className="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-700 transition-all"
+                onClick={() => setFormData({ ...formData, status: "Cancelled" })}
+              >
+                Cancel Order
+              </button>
             </div>
           )}
 

@@ -1,7 +1,7 @@
 import React from "react";
-import Hero from "./home/hero";
-import ProductCard from "./home/Products";
-import Footer from "./home/Footer";
+import Hero from "./hero";
+import ProductCard from "./Products";
+import Footer from "./Footer";
 
 function Home() {
   return (

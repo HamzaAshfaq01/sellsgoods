@@ -64,6 +64,23 @@ const getOrders = asyncHandler(async (req, res) => {
 });
 
 
+const getAllOrders = asyncHandler(async (req, res) => {
+  try {
+    console.log("Fetching all orders...");
+
+    const orders = await Order.find()
+      .populate("buyerId", "name email") 
+      .populate("items.productId", "title price") 
+      .sort({ createdAt: -1 });
+
+    console.log("Total Orders Found:", orders.length);
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching all orders:", error);
+    res.status(500).json({ message: "Failed to fetch all orders" });
+  }
+});
 
 
 
@@ -111,4 +128,4 @@ const deleteOrder = asyncHandler(async (req, res) => {
   }
 });
 
-export { createOrder, getOrders, getOrderById, updateOrder, deleteOrder };
+export { createOrder, getOrders, getOrderById, updateOrder, deleteOrder, getAllOrders };

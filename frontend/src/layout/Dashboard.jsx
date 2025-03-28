@@ -6,14 +6,21 @@ import {
   OrderSVG,
   UsersSVG,
   LogoutSVG,
-  CategoriesSVG
+  CategoriesSVG,
+  AdminSVG
 } from "../assets/svg/index";
 
 const AdminDropdownItems = [
+  
   {
     label: "Profile",
     href: "/dashboard/profile",
     icon: <UserSVG />,
+  },
+  {
+label: "Users",
+href: "/dashboard/users",
+icon : <AdminSVG/>
   },
   {
     label: "Products",

@@ -44,7 +44,7 @@ const Cart = () => {
       quantity: item.quantity,
       price: item.price,
       image: item.image,
-      sellerId: item.sellerId, // Ensure sellerId is included
+      sellerId: item.sellerId, 
     }));
   
     if (items.some(item => !item.sellerId)) {
@@ -64,7 +64,7 @@ const Cart = () => {
       tax: calculateTotal() * 0.1,
       shipping: calculateTotal() * 0.05,
       total: calculateTotal() * 1.15,
-      status: "Pending",
+      status: "Pending"
     };
   
     console.log("Order Data Before Sending:", orderData); // Debugging

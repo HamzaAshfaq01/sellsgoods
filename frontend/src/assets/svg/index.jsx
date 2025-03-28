@@ -133,6 +133,30 @@ const UserSVG = () => (
     />
   </svg>
 );
+
+const AdminSVG = () => (
+  <svg
+    className="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    {/* Head and body (like the user icon) */}
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14c-4 0-7 3-7 7h14c0-4-3-7-7-7z"
+    />
+    {/* Admin Hat (or a crown-like element) */}
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M9 3h6l1 3h-8l1-3z"
+    />
+  </svg>
+);
 const ProductSVG = () => (
   <svg
     className="h-4 w-4"
@@ -225,5 +249,6 @@ export {
   OrderSVG,
   UsersSVG,
   LogoutSVG,
-  CategoriesSVG
+  CategoriesSVG,
+  AdminSVG
 };

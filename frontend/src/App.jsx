@@ -7,7 +7,7 @@ import {
 import { ToastContainer } from "react-toastify";
 import DashboardLayout from "./layout/Dashboard";
 import Header from "./components/Header";
-import Home from "./pages/Home";
+import Home from "./pages/home/Home";
 import SignIn from "./pages/SignIn";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
@@ -26,6 +26,8 @@ import ProductDetail from "./pages/home/ProductDetail";
 import CategoryProducts from "./pages/home/CategoryProducts";
 import { CartProvider } from "./context/CartContext";
 import Cart from "./pages/cart/Cart";
+import UsersListScreen from "./pages/dashboard/Users";
+
 
 function App() {
   return (
@@ -44,6 +46,8 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="products" element={<ProductListScreen />} />
            <Route path = "categories" element ={<Categories/>}/>
+           <Route path = "users" element ={<UsersListScreen/>}/>
+
           <Route path="products/add" element={<AddProductScreen />} />
           <Route path="categories/add" element={<AddCategories />} />
          
