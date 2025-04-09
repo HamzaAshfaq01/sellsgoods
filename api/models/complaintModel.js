@@ -27,8 +27,11 @@ const ComplaintSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Pending", "Approved", "Rejected"],
+    enum: ["Pending", "In Progress", "Approved", "Rejected"],
     default: "Pending",
+  },
+  images: {
+    type: [String],
   },
   sellerId: {
     type: mongoose.Schema.Types.ObjectId,

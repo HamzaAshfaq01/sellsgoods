@@ -111,39 +111,41 @@ const getComplaints = asyncHandler(async (req, res) => {
   
 
 
-  const createComplaint = asyncHandler(async (req, res) => {
-    const { order, reason } = req.body;
-  
-    if (!order || !reason) {
-      return res.status(400).json({ message: "Order and reason are required." });
-    }
-  
+const createComplaint = asyncHandler(async (req, res) => {
+  const { order, reason } = req.body;
 
-    const orderDetails = await Order.findById(order).populate('items.productId', 'title price image sellerId');
-    console.log("Order Details:", orderDetails)
-    
-    if (!orderDetails) {
-      return res.status(404).json({ message: "Order not found." });
-    }
+  if (!order || !reason) {
+    return res.status(400).json({ message: "Order and reason are required." });
+  }
 
-    if (!orderDetails.buyerId || orderDetails.buyerId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: "You are not authorized to file a complaint for this order." });
-    }
+  const orderDetails = await Order.findById(order).populate('items.productId', 'title price image sellerId');
+  console.log("Order Details:", orderDetails);
   
-    
-    const sellerId = orderDetails.sellerId;
-    console.log("Extracted Seller ID:", sellerId);
-  
-    const complaint = await Complaint.create({
-      order,
-      reason,
-      reportedBy: req.user._id,
-      sellerId
-    });
-  
-    console.log("complaint>>>", complaint);
-    res.status(201).json(complaint);
+  if (!orderDetails) {
+    return res.status(404).json({ message: "Order not found." });
+  }
+
+  if (!orderDetails.buyerId || orderDetails.buyerId.toString() !== req.user._id.toString()) {
+    return res.status(403).json({ message: "You are not authorized to file a complaint for this order." });
+  }
+
+  const sellerId = orderDetails.sellerId;
+  console.log("Extracted Seller ID:", sellerId);
+
+  const images = req.files?.map((file) => file.path.replace(/\\/g, "/")) || []; // handling uploaded images
+
+  const complaint = await Complaint.create({
+    order,
+    reason,
+    reportedBy: req.user._id,
+    sellerId,
+    images, 
   });
+
+  console.log("Complaint Created:", complaint);
+  res.status(201).json(complaint);
+});
+
   
   
 

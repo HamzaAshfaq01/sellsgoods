@@ -248,11 +248,18 @@ const getProducts = asyncHandler(async (req, res) => {
       .populate("seller", "name email")
       .sort({ createdAt: -1 });
 
-    const categories = [...new Set(products.map((product) => product.category.name))];
+    // Check for null or undefined categories and filter out invalid products
+    const filteredProducts = products.filter(product => product.category && product.category.name);
 
-  
+    // If filteredProducts is empty, return an appropriate response
+    if (filteredProducts.length === 0) {
+      return res.status(404).json({ message: "No valid products found." });
+    }
+
+    const categories = [...new Set(filteredProducts.map((product) => product.category.name))];
+
     const productsByCategory = {};
-    products.forEach((product) => {
+    filteredProducts.forEach((product) => {
       const categoryName = product.category.name;
       if (!productsByCategory[categoryName]) {
         productsByCategory[categoryName] = [];
@@ -266,6 +273,7 @@ const getProducts = asyncHandler(async (req, res) => {
     res.status(500).json({ message: error.message || "Server error" });
   }
 });
+
 const getProductsByCategory = asyncHandler(async (req, res) => {
   try {
     const { category } = req.params;
