@@ -7,7 +7,8 @@ import {
   UsersSVG,
   LogoutSVG,
   CategoriesSVG,
-  AdminSVG
+  AdminSVG,
+  ComplaintSVG
 } from "../assets/svg/index";
 
 const AdminDropdownItems = [
@@ -37,7 +38,12 @@ icon : <AdminSVG/>
     href: "/dashboard/orders",
     icon:<OrderSVG/>
     
-  }
+  },
+  {
+    label: "Complaints",
+    href: "/dashboard/complaints",
+    icon: <ComplaintSVG />,
+  },
 
   // {
   //   label: "Orders",
@@ -66,6 +72,11 @@ const SellerDropdownItems = [
     href: "/dashboard/orders",
     icon:<OrderSVG/>
     
+  },
+  {
+    label: "Complaints",
+    href: "/dashboard/complaints",
+    icon: <ComplaintSVG />,
   }
   // {
   //   label: "Orders",
@@ -89,6 +100,11 @@ const BuyerDropdownItems = [
     href: "/dashboard/orders",
     icon:<OrderSVG/>
     
+  },
+  {
+    label: "Complaints",
+    href: "/dashboard/complaints",
+    icon: <ComplaintSVG />,
   }
   // {
   //   label: "Orders",

@@ -229,91 +229,89 @@ export default function Header() {
           </button>
 
           <nav className="hidden lg:flex items-center gap-4 xl:gap-6">
-            <div className="relative">
-              <Dropdown
-                label="Categories"
-                icon={<CategorySVG />}
-                items={categories?.map((category) => ({
-                  label: category.name, 
-  href: `/category/${category.name.replace(/\s+/g, "-")}?categories=${encodeURIComponent(category.name)}`,
-                  adminOnly: false,
-                  
-                }))}
-              />
-            </div>
+  <div className="relative">
+    <Dropdown
+      label="Categories"
+      icon={<CategorySVG />}
+      items={(Array.isArray(categories) ? categories : []).map((category) => ({
+        label: category.name, 
+        href: `/category/${category.name.replace(/\s+/g, "-")}?categories=${encodeURIComponent(category.name)}`,
+        adminOnly: false,
+      }))}
+    />
+  </div>
 
-            <div className="relative w-64 xl:w-80">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <SearchSVG />
-              </div>
-              <input
-        type="search"
-        placeholder="Search products..."
-        className="pl-10 w-full py-2 px-4 rounded-full bg-gray-100 text-gray-900 focus:ring-2 focus:ring-[#0f1c3c]/50 border border-gray-200"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+  <div className="relative w-64 xl:w-80">
+    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+      <SearchSVG />
+    </div>
+    <input
+      type="search"
+      placeholder="Search products..."
+      className="pl-10 w-full py-2 px-4 rounded-full bg-gray-100 text-gray-900 focus:ring-2 focus:ring-[#0f1c3c]/50 border border-gray-200"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
+
+    {/* Dropdown for search results */}
+    {isDropdownOpen && searchResults.length > 0 && (
+      <div className="absolute w-full mt-1 bg-white border border-gray-300 shadow-lg rounded-lg z-50">
+        {searchResults.map((product) => (
+          <div
+            key={product.id}
+            className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
+            onClick={() => navigate(`/productdetails/${product._id}/view`)}
+          >
+            <img
+              src={
+                import.meta.env.VITE_API_SERVER_UPLOADS +
+                product.images || "/placeholder.svg"
+              }
+              alt={product.title}
+              className="w-10 h-10 object-contain"
+            />
+
+            <span className="text-gray-800">{product.title}</span>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+
+  <button
+    onClick={() => navigate("/cart")}
+    className={`flex items-center gap-2 py-2 px-4 rounded-full transition-colors cursor-pointer
+      ${hasItems ? "bg-[#0f1c3c] text-white hover:bg-gray-800" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+  >
+    <CartSVG />
+    <span>Cart</span>
+    {hasItems && (
+      <span className="bg-red-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
+        {totalItems}
+      </span>
+    )}
+  </button>
+
+  {userInfo ? (
+    <div className="relative">
+      <Dropdown
+        label={userInfo?.name}
+        icon={<UserSVG />}
+        items={DropDownMenu}
+        actionButton={LogoutButton}
       />
-
-      {/* Dropdown for search results */}
-      {isDropdownOpen && searchResults.length > 0 && (
-        <div className="absolute w-full mt-1 bg-white border border-gray-300 shadow-lg rounded-lg z-50">
-          {searchResults.map((product) => (
-            <div
-              key={product.id}
-              className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => navigate(`/productdetails/${product._id}/view`)}
-            >
-              <img
-                  src={
-                    import.meta.env.VITE_API_SERVER_UPLOADS +
-                      product.images || "/placeholder.svg"
-                  }
-                  alt={product.title}
-                  className="w-10 h-10 object-contain"
-                />
-
-              <span className="text-gray-800">{product.title}</span>
-            </div>
-          ))}
-        </div>
-      )}
-  
-  
-            </div>
-
-            <button
-      onClick={() => navigate("/cart")}
-      className={`flex items-center gap-2 py-2 px-4 rounded-full transition-colors cursor-pointer
-        ${hasItems ? "bg-[#0f1c3c] text-white hover:bg-gray-800" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+    </div>
+  ) : (
+    <Link
+      to="/login"
+      className="flex items-center gap-2 text-white py-2 px-4 rounded-full bg-[#0f1c3c] hover:bg-[#0f1c3c]/90 transition-colors"
     >
-      <CartSVG />
-      <span>Cart</span>
-      {hasItems && (
-        <span className="bg-red-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
-          {totalItems}
-        </span>
-      )}
-    </button>
+      <UserSVG />
+      <span>Sign In</span>
+    </Link>
+  )}
+</nav>
 
-            {userInfo ? (
-              <div className="relative">
-                <Dropdown
-                  label={userInfo?.name}
-                  icon={<UserSVG />}
-                  items={DropDownMenu}
-                  actionButton={LogoutButton}
-                />
-              </div>
-            ) : (
-              <Link
-                to="/login"
-                className="flex items-center gap-2 text-white py-2 px-4 rounded-full bg-[#0f1c3c] hover:bg-[#0f1c3c]/90 transition-colors"
-              >
-                <UserSVG />
-                <span>Sign In</span>
-              </Link>
-            )}
-          </nav>
         </div>
       </div>
       <Sidebar isMenuOpen={isMenuOpen} closeMenu={() => setIsMenuOpen(false)} />

@@ -27,6 +27,9 @@ import CategoryProducts from "./pages/home/CategoryProducts";
 import { CartProvider } from "./context/CartContext";
 import Cart from "./pages/cart/Cart";
 import UsersListScreen from "./pages/dashboard/Users";
+import JazzCashCheckout from "./pages/cart/JazzCashCheckout";
+import ComplaintListScreen from "./pages/dashboard/Complaint";
+import EditComplaintScreen from "./pages/dashboard/EditComplaints";
 
 
 function App() {
@@ -37,6 +40,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home/>} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/jazzcash-checkout" element={<JazzCashCheckout />} />
         <Route path="productdetails/:id/view" element={<ProductDetail key={location.pathname}/> } />
         <Route path="/category/:category" element={<CategoryProducts />} />
         <Route path="/login" element={<SignIn />} />
@@ -47,6 +51,8 @@ function App() {
           <Route path="products" element={<ProductListScreen />} />
            <Route path = "categories" element ={<Categories/>}/>
            <Route path = "users" element ={<UsersListScreen/>}/>
+           <Route path = "complaints" element ={<ComplaintListScreen/>}/>
+           <Route path="complaints/:id/edit" element={<EditComplaintScreen />} />
 
           <Route path="products/add" element={<AddProductScreen />} />
           <Route path="categories/add" element={<AddCategories />} />

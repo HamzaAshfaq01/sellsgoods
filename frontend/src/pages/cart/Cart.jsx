@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useCart } from "../../context/CartContext";
 import axios from "../../axios";
 import { toast } from "react-toastify";
 
 const Cart = () => {
   const { cart, updateCart } = useCart();
+  const [paymentMethod, setPaymentMethod] = useState("COD");
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -31,7 +33,6 @@ const Cart = () => {
       return;
     }
   
-    // Ensure required fields are included
     const buyerId = user?.id || user?._id;
     if (!buyerId) {
       toast.error("User ID is missing. Please log in again.");
@@ -44,7 +45,7 @@ const Cart = () => {
       quantity: item.quantity,
       price: item.price,
       image: item.image,
-      sellerId: item.sellerId, 
+      sellerId: item.sellerId,
     }));
   
     if (items.some(item => !item.sellerId)) {
@@ -55,7 +56,7 @@ const Cart = () => {
   
     const orderData = {
       buyerId,
-      sellerId: items[0].sellerId, // Assuming one seller per order
+      sellerId: items[0].sellerId,
       customerName: user?.name || "Unknown",
       email: user?.email || "unknown@example.com",
       phoneNumber: user?.phone || "0000000000",
@@ -64,31 +65,36 @@ const Cart = () => {
       tax: calculateTotal() * 0.1,
       shipping: calculateTotal() * 0.05,
       total: calculateTotal() * 1.15,
-      status: "Pending"
+      status: "Pending",
+      paymentMethod, // include this field in the order
     };
   
-    console.log("Order Data Before Sending:", orderData); // Debugging
+    console.log("Order Data Before Sending:", orderData);
   
-    try {
-      const { data, status } = await axios.post(
-        `/orders`,
-        orderData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
+    if (paymentMethod === "COD") {
+      try {
+        const { data, status } = await axios.post(
+          `/orders`,
+          orderData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        );
+  
+        if (status === 201) {
+          toast.success("Order placed successfully!");
+          updateCart([]);
+          navigate("/orders");
         }
-      );
-  
-      if (status === 201) {
-        toast.success("Order placed successfully!");
-        updateCart([]);
-        navigate("/orders");
+      } catch (error) {
+        console.error("Order Error:", error.response?.data || error.message);
+        toast.error(error.response?.data?.message || "Failed to place order.");
       }
-    } catch (error) {
-      console.error("Order Error:", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || "Failed to place order.");
+    } else if (paymentMethod === "JazzCash") {
+      navigate("/jazzcash-checkout", { state: orderData });
     }
   };
   
@@ -188,6 +194,30 @@ const Cart = () => {
                 PKR {(calculateTotal() * 1.15).toLocaleString()}
               </span>
             </div>
+            <div className="mb-6">
+  <h3 className="font-semibold mb-2">Select Payment Method</h3>
+  <div className="flex gap-4">
+    <label className="flex items-center gap-2">
+      <input
+        type="radio"
+        value="COD"
+        checked={paymentMethod === "COD"}
+        onChange={(e) => setPaymentMethod(e.target.value)}
+      />
+      Cash on Delivery
+    </label>
+    <label className="flex items-center gap-2">
+      <input
+        type="radio"
+        value="JazzCash"
+        checked={paymentMethod === "JazzCash"}
+        onChange={(e) => setPaymentMethod(e.target.value)}
+      />
+      JazzCash (Online)
+    </label>
+  </div>
+</div>
+
 
             <button
               className="w-full bg-[#0f1c3c] text-white py-3 rounded-lg hover:bg-[#162b5b] transition-colors"

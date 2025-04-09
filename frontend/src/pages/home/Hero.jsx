@@ -51,7 +51,7 @@ const Hero = () => {
           className="w-full h-full object-cover rounded-lg shadow-md"
         />
       </div>
-
+  
       <h2 className="text-2xl font-bold text-gray-800 mt-25 mb-4">Shop by Category</h2>
       <div className="relative w-full mt-10">
         <button
@@ -64,7 +64,7 @@ const Hero = () => {
           ref={sliderRef}
           className="flex overflow-hidden space-x-2 scrollbar-hide w-full py-2 px-8"
         >
-          {categories.length > 0 ? (
+          {Array.isArray(categories) && categories.length > 0 ? (
             categories.map((category, index) => (
               <span
                 key={index}
@@ -87,6 +87,7 @@ const Hero = () => {
       </div>
     </div>
   );
+  
 };
 
 export default Hero;
