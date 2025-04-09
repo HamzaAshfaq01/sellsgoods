@@ -86,75 +86,71 @@ const CategoryListScreen = () => {
         const options = { year: "numeric", month: "long", day: "numeric" };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
-    const Pagination = () => {
-        const totalButtons = 5; 
-        const getPageNumbers = () => {
-          let start = Math.max(1, currentPage - Math.floor(totalButtons / 2));
-          let end = Math.min(totalPages, start + totalButtons - 1);
-      
+    const Pagination = ({ current, total, onChange }) => {
+      const totalButtons = 5;  // Number of buttons to show in pagination
+      const getPageNumbers = () => {
+          let start = Math.max(1, current - Math.floor(totalButtons / 2));
+          let end = Math.min(total, start + totalButtons - 1);
+  
           if (end - start < totalButtons - 1) {
-            start = Math.max(1, end - totalButtons + 1);
+              start = Math.max(1, end - totalButtons + 1);
           }
-      
+  
           let pages = [];
-          if (start > 1) pages.push(1);
-          if (start > 2) pages.push("...");
-      
+          if (start > 1) pages.push(1); // Always show the first page
+          if (start > 2) pages.push("..."); // Show "..." if skipped pages before start
+  
+          // Show all pages within the start and end range
           for (let i = start; i <= end; i++) {
-            pages.push(i);
+              pages.push(i);
           }
-      
-          if (end < totalPages - 1) pages.push("...");
-          if (end < totalPages) pages.push(totalPages);
-      
+  
+          if (end < total - 1) pages.push("..."); // Show "..." if skipped pages after end
+          if (end < total) pages.push(total); // Always show the last page
+  
           return pages;
-        };
-      
-        return (
-          <div className="flex justify-center items-center space-x-2 mt-10 mb-4">
-          <button
-      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-        currentPage === 1 || loading ? "bg-none text-gray-500 cursor-not-allowed" : "bg-none text-[#0f1c3c] hover:bg-[#0f1c3c] hover:text-gray-300 cursor-pointer"
-      }`}
-      disabled={currentPage === 1 || loading}
-      onClick={() => handlePageChange(currentPage - 1)}
-    >
-      &lt;
-    </button>
-    
-    {getPageNumbers().map((page, index) => (
-      <button
-        key={index}
-        className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-          currentPage === page
-            ? "bg-[#0f1c3c] text-white font-bold cursor-pointer"
-            : "bg-gray-200 cursor-pointer hover:bg-gray-300"
-        } ${page === "..." ? "cursor-pointer text-gray-500 bg-transparent" : ""}`}
-        onClick={() => page !== "..." && handlePageChange(page)}
-        disabled={page === "..." || loading}
-      >
-        {loading && currentPage === page ? (
-          <span className="animate-spin">...</span> 
-        ) : (
-          page
-        )}
-      </button>
-    ))}
-    
-    <button
-      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-        currentPage === totalPages || loading ? "bg-none text-gray-500 cursor-not-allowed" : "bg-none text-[#0f1c3c] hover:bg-[#0f1c3c] hover:text-gray-300 cursor-pointer"
-      }`}
-      disabled={currentPage === totalPages || loading}
-      onClick={() => handlePageChange(currentPage + 1)}
-    >
-      &gt;
-    </button>
-          </div>
-        );
-        
       };
-
+  
+      return (
+          <div className="flex justify-center items-center space-x-2 mt-10 mb-4">
+              <button
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                      current === 1 || total === 0 ? "bg-none text-gray-500 cursor-not-allowed" : "bg-none text-[#0f1c3c] hover:bg-[#0f1c3c] hover:text-gray-300 cursor-pointer"
+                  }`}
+                  disabled={current === 1 || total === 0}
+                  onClick={() => onChange(current - 1)}
+              >
+                  &lt;
+              </button>
+  
+              {getPageNumbers().map((page, index) => (
+                  <button
+                      key={index}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                          current === page
+                              ? "bg-[#0f1c3c] text-white font-bold cursor-pointer"
+                              : "bg-gray-200 cursor-pointer hover:bg-gray-300"
+                      } ${page === "..." ? "cursor-pointer text-gray-500 bg-transparent" : ""}`}
+                      onClick={() => page !== "..." && onChange(page)}
+                      disabled={page === "..." || total === 0}
+                  >
+                      {page}
+                  </button>
+              ))}
+  
+              <button
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                      current === total || total === 0 ? "bg-none text-gray-500 cursor-not-allowed" : "bg-none text-[#0f1c3c] hover:bg-[#0f1c3c] hover:text-gray-300 cursor-pointer"
+                  }`}
+                  disabled={current === total || total === 0}
+                  onClick={() => onChange(current + 1)}
+              >
+                  &gt;
+              </button>
+          </div>
+      );
+  };
+  
     return (
         <React.Fragment>
             <div className="flex justify-between items-center mb-6">
@@ -226,7 +222,8 @@ const CategoryListScreen = () => {
 
             <DeleteConfirmationModal isOpen={deleteModalOpen} onClose={closeDeleteModal} onConfirm={handleDeleteConfirm} itemName={categoryToDelete?.name || ""} isDeleting={isDeleting} />
 
-            <Pagination current={currentPage} pageSize={pageSize} total={categories.length} onChange={handlePageChange} />
+            <Pagination current={currentPage} pageSize={pageSize} total={totalPages} onChange={handlePageChange} />
+
         </React.Fragment>
     );
 };

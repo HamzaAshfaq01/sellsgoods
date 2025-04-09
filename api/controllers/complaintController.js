@@ -37,60 +37,74 @@ async function fetchFullComplaint(id) {
     .sort({ createdAt: -1 });
 }
 
-
 const getComplaints = asyncHandler(async (req, res) => {
+  console.log("hello>>>>");
+  const userId = req.user._id;
+  const { page = 1, limit = 10 } = req.query;  
 
+  console.log("User ID: ", req.user._id);
 
-    console.log("hello>>>>")
-    const userId = req.user._id;
+  const skip = (page - 1) * limit;  
+  const limitNum = parseInt(limit, 10);  
 
-    console.log("User ID: ", req.user._id);
+  let complaints;
+  let totalComplaints;
+  
+  
+  if (req.user.role === "admin") {
+    complaints = await Complaint.find()
+      .populate(orderPopulate)
+      .populate(reportedByPopulate)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum);
+
+    totalComplaints = await Complaint.countDocuments();  
+  }
+  
+  
+  else if (req.user.role === "buyer") {
+    complaints = await Complaint.find({ reportedBy: userId })
+      .populate(orderPopulate)
+      .populate(reportedByPopulate)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum);
+
+    totalComplaints = await Complaint.countDocuments({ reportedBy: userId }); 
+  }
+  
+
+  else if (req.user.role === "seller") {
+    complaints = await Complaint.find({ sellerId: userId })
+      .populate(orderPopulate)
+      .populate(reportedByPopulate)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum);
+
+    totalComplaints = await Complaint.countDocuments({ sellerId: userId });  
+  }
 
   
-    if (req.user.role === "admin") {
-      const complaints = await Complaint.find()
-        .populate(orderPopulate)
-        .populate(reportedByPopulate)
-        .sort({ createdAt: -1 });
-      return res.status(200).json(complaints);
-    }
+  if (complaints.length === 0) {
+    return res.status(404).json({ message: "No complaints found." });
+  }
+
+  const totalPages = Math.ceil(totalComplaints / limitNum);  
+
   
-    if (req.user.role === "buyer") {
-      const complaints = await Complaint.find({ reportedBy: userId })
-        .populate(orderPopulate)
-        .populate(reportedByPopulate)
-        .sort({ createdAt: -1 });
-  
-      if (complaints.length === 0) {
-        return res.status(404).json({ message: "No complaints found for this buyer." });
-      }
-  
-      return res.status(200).json(complaints);
-    }
-  
-    if (req.user.role === "seller") {
-        console.log("Seller entered");
-        const userId = req.user._id;
-        console.log("Seller User ID:", userId);
-        
-        const complaints = await Complaint.find({ sellerId: userId })
-        //   .populate(orderPopulate)
-        //   .populate(reportedByPopulate)
-        //   .sort({ createdAt: -1 });
-      
-        console.log("Complaints for Seller:", complaints);
-        
-        if (complaints.length === 0) {
-          return res.status(404).json({ message: "No complaints found for this seller." });
-        }
-      
-        return res.status(200).json(complaints);
-      }
-      
-    
-  
-    return res.status(403).json({ message: "Access denied." });
+  res.status(200).json({
+    complaints,
+    pagination: {
+      currentPage: page,
+      totalComplaints,
+      totalPages,
+      limit: limitNum,
+    },
   });
+});
+
   
   
   
@@ -104,19 +118,21 @@ const getComplaints = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: "Order and reason are required." });
     }
   
-   
+
     const orderDetails = await Order.findById(order).populate('items.productId', 'title price image sellerId');
+    console.log("Order Details:", orderDetails)
+    
     if (!orderDetails) {
       return res.status(404).json({ message: "Order not found." });
     }
-  
-   
-    if (orderDetails.user.toString() !== req.user._id.toString()) {
+
+    if (!orderDetails.buyerId || orderDetails.buyerId.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "You are not authorized to file a complaint for this order." });
     }
   
     
-    const sellerId = orderDetails.items[0].productId.sellerId;
+    const sellerId = orderDetails.sellerId;
+    console.log("Extracted Seller ID:", sellerId);
   
     const complaint = await Complaint.create({
       order,
@@ -126,9 +142,9 @@ const getComplaints = asyncHandler(async (req, res) => {
     });
   
     console.log("complaint>>>", complaint);
-  
     res.status(201).json(complaint);
   });
+  
   
 
 const getComplaintById = asyncHandler(async (req, res) => {

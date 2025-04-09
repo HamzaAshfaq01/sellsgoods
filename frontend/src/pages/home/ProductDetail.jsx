@@ -518,7 +518,7 @@ const ProductDetail = () => {
       Call Now
     </a>
     <a
-  href={`mailto:${product.contact?.email || ""}`}
+  href={`mailto:${product.contact.email}`}
   className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm text-center font-medium hover:bg-green-600 transition w-full"
 >
   Via Email

@@ -3,11 +3,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "../../axios";
 import { toast } from "react-toastify";
 import { Progress } from "antd";
+import ComplaintModals from "../Modals/ComplaintModal";
 
 const EditOrderScreen = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [role, setRole] = useState(null);
+
+
+  const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     status: "",
     cancelReason: "",
@@ -18,6 +22,7 @@ const EditOrderScreen = () => {
   });
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
+  
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -172,7 +177,7 @@ const EditOrderScreen = () => {
           )}
 
           {role === "buyer" && formData.status === "Pending" && (
-            <div className="mb-6 flex justify-end">
+            <div className="mb-6 flex items-end gap-3">
               <button
                 type="button"
                 className="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-700 transition-all"
@@ -180,6 +185,14 @@ const EditOrderScreen = () => {
               >
                 Cancel Order
               </button>
+
+              <button
+                  type="button"
+                  className="bg-yellow-500 text-white py-2 px-6 rounded-lg hover:bg-yellow-600 transition-all"
+                  onClick={() => setModalOpen(true)}
+                >
+                  Report Complaint
+                </button>
             </div>
           )}
 
@@ -191,9 +204,17 @@ const EditOrderScreen = () => {
             >
               {loading ? "Updating..." : "Update Order"}
             </button>
+
+            
           </div>
         </form>
       )}
+
+<ComplaintModals
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            orderId={id} 
+          />
     </div>
   );
 };

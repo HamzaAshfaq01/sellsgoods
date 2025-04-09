@@ -7,6 +7,6 @@ export default defineConfig({
   plugins: [react(), tailwindcss() ],
 
   server: {
-    allowedHosts: ['d5dd-182-189-15-42.ngrok-free.app'],
+    allowedHosts: ['d5dd-182-189-15-42.ngrok-free.app','cbd0-182-189-15-42.ngrok-free.app'],
   },
 })
