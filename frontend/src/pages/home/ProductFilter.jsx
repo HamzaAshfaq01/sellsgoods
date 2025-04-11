@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "../../axios";
 
@@ -6,7 +6,9 @@ const ProductFilter = ({ onFilterChange }) => {
   const navigate = useNavigate();
   const { category: currentCategory } = useParams();
   const location = useLocation();
-
+  const dropdownRef = useRef(null);
+  const dropdownContentRef = useRef(null);
+  
   const queryParams = new URLSearchParams(location.search);
   const initialSearch = queryParams.get("search") || "";
   const initialDate = queryParams.get("date") || "";
@@ -23,7 +25,8 @@ const ProductFilter = ({ onFilterChange }) => {
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState(initialCategories);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [isFilterOpen, setIsFilterOpen] = useState(false); // State for small screen menu
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [dropdownHeight, setDropdownHeight] = useState(0);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -41,6 +44,32 @@ const ProductFilter = ({ onFilterChange }) => {
     };
 
     fetchCategories();
+  }, []);
+
+  
+  useEffect(() => {
+    if (dropdownOpen && dropdownContentRef.current) {
+    
+      setTimeout(() => {
+        setDropdownHeight(dropdownContentRef.current.offsetHeight + 10); 
+      }, 10);
+    } else {
+      setDropdownHeight(0);
+    }
+  }, [dropdownOpen, categories]);
+
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleConditionChange = (value) => {
@@ -64,12 +93,11 @@ const ProductFilter = ({ onFilterChange }) => {
 
     onFilterChange({ search, date, condition, category: selectedCategories });
 
-    setIsFilterOpen(false); // Close filter menu after applying filters
+    setIsFilterOpen(false); 
   };
 
   return (
     <>
-      {/* Button to open filter menu on small screens */}
       <button
         className="md:hidden bg-[#0f1c3c] text-white py-2 px-4 rounded-lg fixed top-4 right-4 z-20"
         onClick={() => setIsFilterOpen(true)}
@@ -77,20 +105,19 @@ const ProductFilter = ({ onFilterChange }) => {
         Open Filters
       </button>
       <div
-  className={`fixed inset-0 bg-black bg-opacity-50 z-30 flex justify-end md:justify-start transition-transform duration-300 ${
-    isFilterOpen ? "translate-x-0" : "translate-x-full"
-  } md:translate-x-0 md:relative md:bg-transparent`}
->
-  <div className="bg-white shadow-md rounded-lg p-4 w-full md:w-64 h-full md:h-auto relative overflow-y-auto">
-    {/* Close Button (Bigger & Inside Modal) */}
-    <button
-      className="absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-700 md:hidden"
-      onClick={() => setIsFilterOpen(false)}
-    >
-      ✕
-    </button>
+        className={`fixed inset-0 bg-black bg-opacity-50 z-30 flex justify-end md:justify-start transition-transform duration-300 ${
+          isFilterOpen ? "translate-x-0" : "translate-x-full"
+        } md:translate-x-0 md:relative md:bg-transparent`}
+      >
+        <div className="bg-white shadow-md rounded-lg p-4 w-full md:w-64 h-full md:h-full relative overflow-y-auto">
+          <button
+            className="absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-700 md:hidden"
+            onClick={() => setIsFilterOpen(false)}
+          >
+            ✕
+          </button>
 
-    <h3 className="text-lg font-bold mb-4 text-[#0f1c3c]">Filters</h3>
+          <h3 className="text-lg font-bold mb-4 text-[#0f1c3c]">Filters</h3>
 
           <div className="mb-4">
             <label className="block text-sm font-semibold text-gray-700">Search</label>
@@ -137,22 +164,24 @@ const ProductFilter = ({ onFilterChange }) => {
             </div>
           </div>
 
-          {/* Categories Dropdown */}
-          <div className="mb-4 relative">
+          <div className="mb-4 relative" ref={dropdownRef}>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Categories</label>
             <div
               className="w-full border border-gray-300 rounded-lg p-2 bg-white cursor-pointer flex justify-between items-center"
               onClick={() => setDropdownOpen(!dropdownOpen)}
             >
-              <span className="text-gray-700 text-sm">
+              <span className="text-gray-700 text-sm truncate">
                 {selectedCategories.length > 0 ? selectedCategories.join(", ") : "Select Categories"}
               </span>
               <span className="text-gray-500">&#9662;</span>
             </div>
 
             {dropdownOpen && (
-              <div className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg z-10">
-                <div className="p-2 max-h-40 overflow-y-auto">
+              <div 
+                ref={dropdownContentRef}
+                className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg z-10"
+              >
+                <div className="p-2 max-h-48 overflow-y-auto">
                   {categories.map((category) => (
                     <div key={category._id} className="flex items-center gap-2 mt-2">
                       <input
@@ -172,13 +201,16 @@ const ProductFilter = ({ onFilterChange }) => {
               </div>
             )}
           </div>
-
-          <button
-            onClick={applyFilters}
-            className="mt-4 w-full bg-[#0f1c3c] text-white py-2 rounded-lg hover:bg-[#0d172e] transition"
-          >
-            Apply Filters
-          </button>
+          
+          
+          <div style={{ marginTop: dropdownOpen ? `${dropdownHeight}px` : '16px' }}>
+            <button
+              onClick={applyFilters}
+              className="w-full bg-[#0f1c3c] text-white py-2 rounded-lg hover:bg-[#0d172e] transition"
+            >
+              Apply Filters
+            </button>
+          </div>
         </div>
       </div>
     </>

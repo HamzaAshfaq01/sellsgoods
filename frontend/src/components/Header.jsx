@@ -17,6 +17,8 @@ import {
   OrderSVG,
   UsersSVG,
   LogoutSVG,
+  CategoriesSVG,
+  ComplaintSVG
 } from "../assets/svg/index";
 import { useCart } from "../context/CartContext";
 
@@ -34,6 +36,27 @@ const AdminDropdownItems = [
     href: "/dashboard/products",
     icon: <ProductSVG />,
   },
+  {
+    label: "Products",
+    href: "/dashboard/products",
+    icon: <ProductSVG />,
+  },
+  {
+    label: "Categories",
+    href: "/dashboard/categories",
+    icon: <CategoriesSVG />,
+  },
+  {
+    label: "Orders",
+    href: "/dashboard/orders",
+    icon:<OrderSVG/>
+    
+  },
+  {
+    label: "Complaints",
+    href: "/dashboard/complaints",
+    icon: <ComplaintSVG />,
+  }
   // {
   //   label: "Orders",
   //   href: "/dashboard/orderlist",
@@ -56,6 +79,17 @@ const SellerDropdownItems = [
     href: "/dashboard/products",
     icon: <ProductSVG />,
   },
+   {
+      label: "Orders",
+      href: "/dashboard/orders",
+      icon:<OrderSVG/>
+      
+    },
+    {
+      label: "Complaints",
+      href: "/dashboard/complaints",
+      icon: <ComplaintSVG />,
+    }
   // {
   //   label: "Orders",
   //   href: "/dashboard/orderlist",
@@ -73,6 +107,17 @@ const BuyerDropdownItems = [
     href: "/dashboard/profile",
     icon: <UserSVG />,
   },
+   {
+      label: "Orders",
+      href: "/dashboard/orders",
+      icon:<OrderSVG/>
+      
+    },
+    {
+      label: "Complaints",
+      href: "/dashboard/complaints",
+      icon: <ComplaintSVG />,
+    }
   // {
   //   label: "Orders",
   //   href: "/dashboard/orderlist",

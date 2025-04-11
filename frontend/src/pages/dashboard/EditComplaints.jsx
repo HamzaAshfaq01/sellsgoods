@@ -20,7 +20,7 @@ const EditComplaintScreen = () => {
     reportedAt: "",
     sellerEmail: "",
     sellerResponse: "",
-    productImages: [], // To hold image URLs
+    productImages: [],
   });
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -111,10 +111,10 @@ const EditComplaintScreen = () => {
             />
           </div>
 
-          {/* Product Images Section */}
+         
           {formData.productImages.length > 0 && (
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Product Images</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Reported Images</label>
               <div className="flex gap-2 overflow-x-auto">
                 {formData.productImages.map((imageUrl, index) => (
                   <img
@@ -160,7 +160,7 @@ const EditComplaintScreen = () => {
             />
           </div>
 
-          {/* New Seller Email Section */}
+          
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-1">Seller Email</label>
             <input
@@ -172,7 +172,7 @@ const EditComplaintScreen = () => {
             />
           </div>
 
-          {/* Editable Seller Response Section */}
+         
           <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-1">Seller Response</label>
         <textarea
