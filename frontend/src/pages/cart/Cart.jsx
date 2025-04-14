@@ -87,7 +87,7 @@ const Cart = () => {
         if (status === 201) {
           toast.success("Order placed successfully!");
           updateCart([]);
-          navigate("/orders");
+          navigate("/success");
         }
       } catch (error) {
         console.error("Order Error:", error.response?.data || error.message);

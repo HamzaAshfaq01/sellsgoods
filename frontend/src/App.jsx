@@ -31,6 +31,7 @@ import JazzCashCheckout from "./pages/cart/JazzCashCheckout";
 import ComplaintListScreen from "./pages/dashboard/Complaint";
 import EditComplaintScreen from "./pages/dashboard/EditComplaints";
 import MonthlySales from "./pages/dashboard/Sales";
+import SuccessPage from "./pages/Result/Success";
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home/>} />
+        <Route path="/success" element={<SuccessPage/>} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/jazzcash-checkout" element={<JazzCashCheckout />} />
         <Route path="productdetails/:id/view" element={<ProductDetail key={location.pathname}/> } />
