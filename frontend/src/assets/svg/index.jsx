@@ -149,6 +149,30 @@ const ComplaintSVG = () => (
     />
   </svg>
 );
+const SalesSVG = () => (
+  <svg
+    className="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M16 11V7a4 4 0 00-8 0v4M5 8h14l-1.5 12h-11L5 8z"
+    />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M12 17v-1a1 1 0 011-1h1a1 1 0 000-2h-2a1 1 0 010-2h1a1 1 0 011 1v1"
+    />
+  </svg>
+);
+
+
+
 
 
 
@@ -269,5 +293,6 @@ export {
   LogoutSVG,
   CategoriesSVG,
   AdminSVG,
-  ComplaintSVG
+  ComplaintSVG,
+  SalesSVG
 };

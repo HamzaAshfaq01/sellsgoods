@@ -8,7 +8,8 @@ import {
   LogoutSVG,
   CategoriesSVG,
   AdminSVG,
-  ComplaintSVG
+  ComplaintSVG,
+  SalesSVG
 } from "../assets/svg/index";
 
 const AdminDropdownItems = [
@@ -47,7 +48,7 @@ icon : <AdminSVG/>
   {
     label: "Sales",
     href: "/dashboard/sales",
-    icon: <ComplaintSVG />,
+    icon: <SalesSVG />,
   },
   
 

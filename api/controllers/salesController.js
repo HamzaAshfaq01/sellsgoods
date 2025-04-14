@@ -4,7 +4,17 @@ import dayjs from "dayjs";
 
 const getSales = async (req, res) => {
   try {
-    const orders = await Order.find().sort({ createdAt: 1 });
+    const { month, year } = req.query;
+
+    
+    let filter = {};
+    if (month && year) {
+      const startDate = dayjs(`${year}-${month}-01`).startOf("month").toDate();
+      const endDate = dayjs(startDate).endOf("month").toDate();
+      filter.createdAt = { $gte: startDate, $lte: endDate };
+    }
+
+    const orders = await Order.find(filter).sort({ createdAt: 1 });
 
     const grouped = {};
 
@@ -29,18 +39,16 @@ const getSales = async (req, res) => {
           maxOrderValue: Math.max(...totals),
         };
 
-        await Sales.findOneAndUpdate(
-          { date },
-          dailyData,
-          { upsert: true, new: true }
-        );
+        await Sales.findOneAndUpdate({ date }, dailyData, {
+          upsert: true,
+          new: true,
+        });
 
         return dailyData;
       })
     );
 
-    res.setHeader('Cache-Control', 'no-store');
-
+    res.setHeader("Cache-Control", "no-store");
     res.status(200).json({ message: "Sales data generated", data: results });
   } catch (err) {
     console.error(err);

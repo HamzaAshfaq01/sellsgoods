@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Row, Col, Card, Statistic } from 'antd';
+import { Checkbox, Row, Col, Card, Statistic, DatePicker } from 'antd';
+import dayjs from 'dayjs';
 import axios from '../../axios';
 import {
   LineChart,
@@ -17,41 +18,47 @@ export default function MonthlySales() {
   const [salesData, setSalesData] = useState([]);
   const [checkedValues, setCheckedValues] = useState(['revenue']);
   const [loading, setLoading] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(null); // null means no date selected
+
+  const fetchSalesData = async (month = null) => {
+    setLoading(true);
+    try {
+      const params = {};
+      if (month) {
+        params.month = month.format("MM");
+        params.year = month.format("YYYY");
+      }
+
+      const response = await axios.get(`/sales`, { params });
+
+      const data = response?.data.data;
+      if (Array.isArray(data)) {
+        setSalesData(data);
+      } else {
+        console.warn('Unexpected API response format:', response.data);
+        setSalesData([]);
+      }
+    } catch (error) {
+      console.error('Error fetching sales data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchSalesData = async () => {
-      
-      setLoading(true);
+    fetchSalesData(selectedMonth);
+  }, [selectedMonth]);
 
-      try {
-        const response = await axios.get(`/sales`);
-
-
-        const data = response?.data.data;
-        if (Array.isArray(data)) {
-          console.log('📊 Setting sales data:', data);
-          setSalesData(data);
-        } else {
-          console.warn('Unexpected API response format:', response.data);
-          setSalesData([]);
-        }
-      } catch (error) {
-        console.error('Error fetching sales data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSalesData();
-  }, []);
+  const handleMonthChange = (date) => {
+    setSelectedMonth(date); // Can be `null` if cleared
+  };
 
   const onChange = (values) => {
-    console.log('Checkboxxxxx', values);
     setCheckedValues(values);
   };
 
   const formatter = (value) => <CountUp end={value} separator="," />;
-  
+
   const revenueData = salesData.map(item => item?.totalRevenue || 0);
   const ordersData = salesData.map(item => item?.totalOrders || 0);
 
@@ -60,16 +67,23 @@ export default function MonthlySales() {
     revenue: item.totalRevenue,
     orders: item.totalOrders,
   }));
-  console.log("chart", chartData);
 
   const totalRevenue = revenueData.reduce((acc, curr) => acc + curr, 0);
   const totalOrders = ordersData.reduce((acc, curr) => acc + curr, 0);
 
- 
-
   return (
     <Card title="Monthly Sales" loading={loading}>
-      <Checkbox.Group
+      <DatePicker
+        picker="month"
+        allowClear={true}
+        value={selectedMonth}
+        onChange={handleMonthChange}
+        format="YYYY/MM"
+        style={{ marginBottom: 20 }}
+        placeholder="Select month (optional)"
+      />
+
+      <Checkbox.Group style={{marginLeft: 20}}
         options={[
           { label: 'Revenue', value: 'revenue' },
           { label: 'Total Orders', value: 'orders' },
@@ -90,49 +104,23 @@ export default function MonthlySales() {
           </Col>
         )}
       </Row>
+
       <ResponsiveContainer width="100%" height={500}>
-  <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-    <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="date" />
-    
-   
-    <YAxis 
-      yAxisId="left"
-      stroke="#1890ff" 
-      tick={{ fill: '#1890ff' }} 
-    />
-    
-    
-    <YAxis 
-      yAxisId="right"
-      orientation="right"
-      stroke="#82ca9d" 
-      tick={{ fill: '#82ca9d' }} 
-    />
-    
-    <Tooltip />
-    <Legend />
-    
-    {checkedValues.includes('revenue') && (
-      <Line
-        yAxisId="left"
-        type="monotone"
-        dataKey="revenue"
-        stroke="#1890ff" // Blue line
-        activeDot={{ r: 8 }}
-      />
-    )}
-    
-    {checkedValues.includes('orders') && (
-      <Line
-        yAxisId="right"
-        type="monotone"
-        dataKey="orders"
-        stroke="#82ca9d" // Green line
-      />
-    )}
-  </LineChart>
-</ResponsiveContainer>
+        <LineChart data={chartData} margin={{ top: 20, right: 20, left: 20, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" />
+          <YAxis yAxisId="left" stroke="#1890ff" tick={{ fill: '#1890ff' }} />
+          <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" tick={{ fill: '#82ca9d' }} />
+          <Tooltip />
+          <Legend />
+          {checkedValues.includes('revenue') && (
+            <Line yAxisId="left" type="monotone" dataKey="revenue" stroke="#1890ff" activeDot={{ r: 8 }} />
+          )}
+          {checkedValues.includes('orders') && (
+            <Line yAxisId="right" type="monotone" dataKey="orders" stroke="#82ca9d" />
+          )}
+        </LineChart>
+      </ResponsiveContainer>
     </Card>
   );
 }
