@@ -11,6 +11,7 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import jazzCashRoutes from "./routes/jazzCashRoutes.js"
 import complaintRoutes from "./routes/complaintRoutes.js";
+import salesRoutes from "./routes/salesRoutes.js"
 const port = process.env.PORT || 5000;
 
 connectDB();
@@ -35,6 +36,7 @@ app.use("/api/category", categoryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/jazzCash", jazzCashRoutes);
 app.use("/api/complaints", complaintRoutes);
+app.use("/api/sales", salesRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

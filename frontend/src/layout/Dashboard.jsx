@@ -44,6 +44,13 @@ icon : <AdminSVG/>
     href: "/dashboard/complaints",
     icon: <ComplaintSVG />,
   },
+  {
+    label: "Sales",
+    href: "/dashboard/sales",
+    icon: <ComplaintSVG />,
+  },
+  
+
 
   // {
   //   label: "Orders",

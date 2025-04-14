@@ -30,6 +30,7 @@ import UsersListScreen from "./pages/dashboard/Users";
 import JazzCashCheckout from "./pages/cart/JazzCashCheckout";
 import ComplaintListScreen from "./pages/dashboard/Complaint";
 import EditComplaintScreen from "./pages/dashboard/EditComplaints";
+import MonthlySales from "./pages/dashboard/Sales";
 
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
       
           <Route path="orders" element={<OrdersListing />} />
           <Route path="orders/:id/edit" element={<EditOrderScreen />} />
+          <Route path="sales" element={<MonthlySales />} />
 
         </Route>
         <Route path="*" element={<NotFound />} />
