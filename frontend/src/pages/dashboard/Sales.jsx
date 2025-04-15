@@ -18,7 +18,7 @@ export default function MonthlySales() {
   const [salesData, setSalesData] = useState([]);
   const [checkedValues, setCheckedValues] = useState(['revenue']);
   const [loading, setLoading] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState(null); // null means no date selected
+  const [selectedMonth, setSelectedMonth] = useState(null); 
 
   const fetchSalesData = async (month = null) => {
     setLoading(true);
@@ -50,7 +50,7 @@ export default function MonthlySales() {
   }, [selectedMonth]);
 
   const handleMonthChange = (date) => {
-    setSelectedMonth(date); // Can be `null` if cleared
+    setSelectedMonth(date); 
   };
 
   const onChange = (values) => {
@@ -105,22 +105,51 @@ export default function MonthlySales() {
         )}
       </Row>
 
-      <ResponsiveContainer width="100%" height={500}>
-        <LineChart data={chartData} margin={{ top: 20, right: 20, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis yAxisId="left" stroke="#1890ff" tick={{ fill: '#1890ff' }} />
-          <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" tick={{ fill: '#82ca9d' }} />
-          <Tooltip />
-          <Legend />
-          {checkedValues.includes('revenue') && (
-            <Line yAxisId="left" type="monotone" dataKey="revenue" stroke="#1890ff" activeDot={{ r: 8 }} />
-          )}
-          {checkedValues.includes('orders') && (
-            <Line yAxisId="right" type="monotone" dataKey="orders" stroke="#82ca9d" />
-          )}
-        </LineChart>
-      </ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={600}>
+  <LineChart 
+    data={chartData} 
+    margin={{ top: 20, right: 20, left: 20, bottom: 50 }}
+  >
+    <CartesianGrid strokeDasharray="3 3" />
+    <XAxis 
+      dataKey="date"
+      angle={-45}
+      textAnchor="end"
+      height={60}
+      tick={{ fontSize: 12 }}
+      tickFormatter={(value) => dayjs(value).format('D MMM')}
+    />
+    <YAxis yAxisId="left" stroke="#1890ff" />
+    <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
+    <Tooltip 
+      formatter={(value, name) => [
+        name === 'revenue' ? `$${value}` : value,
+        name === 'revenue' ? 'Revenue' : 'Orders'
+      ]}
+      labelFormatter={(label) => dayjs(label).format('DD MMM YYYY')}
+    />
+    <Legend />
+    {checkedValues.includes('revenue') && (
+      <Line 
+        yAxisId="left" 
+        name="Revenue"
+        type="monotone" 
+        dataKey="revenue" 
+        stroke="#1890ff" 
+        activeDot={{ r: 8 }} 
+      />
+    )}
+    {checkedValues.includes('orders') && (
+      <Line 
+        yAxisId="right" 
+        name="Orders"
+        type="monotone" 
+        dataKey="orders" 
+        stroke="#82ca9d" 
+      />
+    )}
+  </LineChart>
+</ResponsiveContainer>
     </Card>
   );
 }

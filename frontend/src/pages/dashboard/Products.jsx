@@ -314,14 +314,17 @@ const ProductListScreen = () => {
                       <img
                         src={
                           import.meta.env.VITE_API_SERVER_UPLOADS +
-                            product.images[getCurrentImageIndex(product._id)] ||
-                          "/placeholder.svg"
+                            product.images[getCurrentImageIndex(product._id)] 
                         }
                         alt={product.title}
                         className="h-16 w-16 object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null; 
+                          e.target.src = '/404.jpg'; 
+                        }}
                       />
 
-                      {/* Image counter */}
+                    
                       {product?.images?.length > 1 && (
                         <div className="absolute bottom-0 right-0 bg-black bg-opacity-60 text-white text-xs px-1.5 py-0.5 rounded-tl-md">
                           {getCurrentImageIndex(product?._id) + 1}/

@@ -96,11 +96,16 @@ const ProductCard = () => {
                   onClick={() => navigate(`/productdetails/${product._id}/view`)}
                   className="relative rounded-lg shadow-lg p-4 block hover:shadow-xl transition cursor-pointer group"
                 >
-                  <img
-                    src={`http://localhost:5000/${product.images?.[getCurrentImageIndex(product._id)]}`}
-                    alt={product.title}
-                    className="w-full h-48 object-cover rounded-t-lg"
-                  />
+                <img
+  src={`http://localhost:5000/${product.images?.[getCurrentImageIndex(product._id)]}`}
+  alt={product.title}
+  className="w-full h-48 object-cover rounded-t-lg"
+  onError={(e) => {
+    e.target.onerror = null; 
+    e.target.src = '/404.jpg'; 
+  }}
+/>
+
                   
                   {product?.images?.length > 1 && (
                     <>

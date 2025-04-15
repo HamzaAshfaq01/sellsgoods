@@ -199,6 +199,10 @@ const ProductDetail = () => {
                   }
                   alt={product.title}
                   className="w-full h-full object-contain"
+                  onError={(e) => {
+                    e.target.onerror = null; 
+                    e.target.src = '/404.jpg'; 
+                  }}
                 />
               ) : (
                 <div className="flex items-center justify-center h-full">

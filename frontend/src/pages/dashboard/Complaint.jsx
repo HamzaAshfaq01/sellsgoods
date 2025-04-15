@@ -12,7 +12,7 @@ const ComplaintListScreen = () => {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState(""); // "edit" or "delete"
+  const [modalAction, setModalAction] = useState("");
   
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);

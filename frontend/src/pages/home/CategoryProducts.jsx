@@ -31,7 +31,7 @@ const CategoryProducts = () => {
   );
   
 
-  // Reset filters and pagination when category changes
+ 
   useEffect(() => {
     setFilters({ search: "", date: "", condition: [] });
     setProducts([]);
@@ -41,7 +41,7 @@ const CategoryProducts = () => {
 
   useEffect(() => {
     const fetchCategoryProducts = async () => {
-      if (!hasMore) return; // Stop fetching if no more products
+      if (!hasMore) return; 
   
       setLoading(true);
   
@@ -115,6 +115,10 @@ const CategoryProducts = () => {
           src={`http://localhost:5000/${product.images?.[0]}`}
           alt={product.title}
           className="w-32 h-32 object-cover rounded-lg"
+          onError={(e) => {
+            e.target.onerror = null; 
+            e.target.src = '/404.jpg'; 
+          }}
         />
         <div>
           <p className="text-lg font-bold text-[#0f1c3c]">PKR {product.price}</p>
@@ -144,6 +148,10 @@ const CategoryProducts = () => {
           src={`http://localhost:5000/${product.images?.[0]}`}
           alt={product.title}
           className="w-32 h-32 object-cover rounded-lg"
+          onError={(e) => {
+            e.target.onerror = null; 
+            e.target.src = '/404.jpg'; 
+          }}
         />
         <div>
           <p className="text-lg font-bold text-[#0f1c3c]">PKR {product.price}</p>
