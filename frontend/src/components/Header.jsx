@@ -32,9 +32,9 @@ const AdminDropdownItems = [
     icon: <UserSVG />,
   },
   {
-    label: "Products",
-    href: "/dashboard/products",
-    icon: <ProductSVG />,
+    label: "Users",
+    href: "/dashboard/users",
+    icon: <UserSVG/>,
   },
   {
     label: "Products",

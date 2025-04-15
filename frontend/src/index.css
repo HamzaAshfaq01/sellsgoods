@@ -2,3 +2,17 @@
 *,body,html{
     scroll-behavior: smooth;
 }
+
+.custom-checkbox .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #0f1c3c !important;
+    border-color: #0f1c3c !important;
+  }
+  
+  .custom-checkbox .ant-checkbox-checked .ant-checkbox-inner::after {
+    border-color: white !important; 
+  }
+  
+  .custom-checkbox .ant-checkbox-checked:hover .ant-checkbox-inner {
+    background-color: #0f1c3c !important;
+    border-color: #0f1c3c !important;
+  }

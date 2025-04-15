@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Checkbox, Row, Col, Card, Statistic, DatePicker } from 'antd';
+import { Checkbox, Row, Col, Card, Statistic, DatePicker , Button} from 'antd';
 import dayjs from 'dayjs';
 import axios from '../../axios';
 import {
@@ -71,6 +71,32 @@ export default function MonthlySales() {
   const totalRevenue = revenueData.reduce((acc, curr) => acc + curr, 0);
   const totalOrders = ordersData.reduce((acc, curr) => acc + curr, 0);
 
+
+  const downloadCSV = () => {
+    if (!chartData.length) return;
+  
+    const headers = ['Date', 'Revenue', 'Orders'];
+    const rows = chartData.map(item => [
+      dayjs(item.date).format('YYYY-MM-DD'),
+      item.revenue,
+      item.orders
+    ]);
+  
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+  
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `sales_data_${dayjs().format('YYYY-MM-DD')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
   return (
     <Card title="Monthly Sales" loading={loading}>
       <DatePicker
@@ -83,7 +109,7 @@ export default function MonthlySales() {
         placeholder="Select month (optional)"
       />
 
-      <Checkbox.Group style={{marginLeft: 20}}
+      <Checkbox.Group  className="custom-checkbox" style={{marginLeft: 20}}
         options={[
           { label: 'Revenue', value: 'revenue' },
           { label: 'Total Orders', value: 'orders' },
@@ -91,6 +117,10 @@ export default function MonthlySales() {
         value={checkedValues}
         onChange={onChange}
       />
+      <Button onClick={downloadCSV} type="primary" style={{ marginTop: 20 }}>
+  Download CSV
+</Button>
+
 
       <Row gutter={[16, 16]} style={{ marginTop: 20 }}>
         {checkedValues.includes('revenue') && (
