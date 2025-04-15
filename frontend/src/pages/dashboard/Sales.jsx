@@ -153,8 +153,8 @@ export default function MonthlySales() {
     <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
     <Tooltip 
       formatter={(value, name) => [
-        name === 'revenue' ? `$${value}` : value,
-        name === 'revenue' ? 'Revenue' : 'Orders'
+        name === 'Revenue' ? `PKR ${value}` : value,
+        name === 'Revenue' ? 'Revenue' : 'Orders'
       ]}
       labelFormatter={(label) => dayjs(label).format('DD MMM YYYY')}
     />
