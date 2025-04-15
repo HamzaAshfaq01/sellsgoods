@@ -1,5 +1,6 @@
 import { useEffect,useState, useRef } from "react";
 import axios from "../../axios";
+import HeroShimmers from "../../shimmers/HeroShimmers";
 
 const Hero = () => {
   const [categories, setCategories] = useState([]);
@@ -64,19 +65,20 @@ const Hero = () => {
           ref={sliderRef}
           className="flex overflow-hidden space-x-2 scrollbar-hide w-full py-2 px-8"
         >
-          {Array.isArray(categories) && categories.length > 0 ? (
-            categories.map((category, index) => (
-              <span
-                key={index}
-                className="px-4 py-2 bg-white rounded-full shadow-md text-gray-700 text-sm font-medium whitespace-nowrap cursor-pointer hover:bg-gray-200"
-                onClick={() => handleCategoryClick(category.name)}
-              >
-                {category.name}
-              </span>
-            ))
-          ) : (
-            <p className="text-gray-500">Loading categories...</p>
-          )}
+       {Array.isArray(categories) && categories.length > 0 ? (
+  categories.map((category, index) => (
+    <span
+      key={index}
+      className="px-4 py-2 bg-white rounded-full shadow-md text-gray-700 text-sm font-medium whitespace-nowrap cursor-pointer hover:bg-gray-200"
+      onClick={() => handleCategoryClick(category.name)}
+    >
+      {category.name}
+    </span>
+  ))
+) : (
+<HeroShimmers/>
+)}
+
         </div>
         <button
           className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow-md z-10"

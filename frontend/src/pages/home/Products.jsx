@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../../axios";
+import ProductShimmers from "../../shimmers/ProductShimmers";
 
 const ProductCard = () => {
   const [categories, setCategories] = useState([]);
@@ -68,9 +69,8 @@ const ProductCard = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0f1c3c]"></div>
-      </div>
+      <ProductShimmers/>
+     
     );
   }
 
