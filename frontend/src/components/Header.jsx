@@ -264,10 +264,8 @@ export default function Header() {
 
           <button
             className="menu-toggle lg:hidden bg-gray-100 p-2 rounded-md hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-[#0f1c3c]/50"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsMenuOpen(!isMenuOpen);
-            }}
+           
+            
             aria-label="Toggle menu"
           >
             {isMenuOpen ? <CrossSVG /> : <HamburgerSVG />}

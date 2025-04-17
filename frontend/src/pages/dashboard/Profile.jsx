@@ -3,7 +3,7 @@ import ChangePassword from "../../components/ChangePassword";
 
 const ProfileScreen = () => {
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="w-full">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Account Settings</h1>
         <p className="text-gray-600 mt-1">Manage your profile information</p>

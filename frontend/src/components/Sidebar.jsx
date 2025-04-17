@@ -15,6 +15,7 @@ import {
   UsersSVG,
   LogoutSVG,
 } from "../assets/svg/index";
+import axios from "../axios";
 
 const AdminDropdownItems = [
   {
@@ -78,17 +79,33 @@ const BuyerDropdownItems = [
   // },
 ];
 
-const categories = [
-  "Electronics",
-  "Clothing",
-  "Home & Kitchen",
-  "Beauty & Personal Care",
-  "Books",
-  "Sports & Outdoors",
-  "Toys & Games",
-  "Health & Wellness",
-];
+// const categories = [
+//   "Electronics",
+//   "Clothing",
+//   "Home & Kitchen",
+//   "Beauty & Personal Care",
+//   "Books",
+//   "Sports & Outdoors",
+//   "Toys & Games",
+//   "Health & Wellness",
+// ];
+const fetchCategories = async () => {
+  try {
+    const response = await axios.get("/category");
+    return response.data;
 
+    
+
+  } catch (error) {
+    console.error("Failed to fetch categories:", error);
+    return [];
+  }
+};
+
+
+
+
+const categories = await fetchCategories();
 const cartItems = [
   // { id: 1, qty: 2 },
   // { id: 2, qty: 1 },
@@ -159,17 +176,15 @@ export default function Sidebar({ isMenuOpen, closeMenu }) {
       <nav className="mt-[40px] p-[20px] flex flex-col items-center gap-[30px] xl:gap-6">
         <div className="w-full flex flex-col items-center gap-[10px]">
           <div className="relative w-full">
-            <Dropdown
-              label="Categories"
-              icon={<CategorySVG />}
-              items={categories?.map((category) => ({
-                label: category,
-                href: `/category/${category
-                  .toLowerCase()
-                  .replace(/\s+/g, "-")}`,
-                adminOnly: false,
-              }))}
-            />
+          <Dropdown
+      label="Categories"
+      icon={<CategorySVG />}
+      items={categories?.map((category) => ({
+        label: category.name,
+        href: `/category/${category.name.toLowerCase().replace(/\s+/g, "-")}`,
+        adminOnly: false,
+      }))}
+    />
           </div>
           <div className="relative w-full">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">

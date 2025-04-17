@@ -37,10 +37,10 @@ const Footer = () => {
     setIsClient(true); 
   }, []);
   return (
-    <div className='flex w-full flex-col mx-auto justify-center flex-1'>
+    <div className='w-full flex-col mx-auto justify-center flex-1'>
    
      
-      <footer className='bg-[#0f1c3c] pt-16 pb-8 px-4 md:px-25 mt-auto '>
+      <footer className='bg-[#0f1c3c] pt-16 pb-8 px-4 md:px-12 mt-auto '>
         <div className='mx-auto'>
     
           <div className='grid grid-cols-1 md:grid-cols-5 gap-8 mt-6'>
@@ -117,7 +117,7 @@ const Footer = () => {
           
           <div className='mt-12 pt-8 border-t border-gray-200'>
             <div className='flex flex-col md:flex-row justify-between items-center'>
-              <p className='text-sm text-gray-200'>Shop.co © 2000-2023. All Rights Reserved</p>
+              <p className='text-sm text-gray-200'>Sells&Goods © 2000-2025. All Rights Reserved</p>
          
             </div>
           </div>
