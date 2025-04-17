@@ -8,7 +8,7 @@ function Home() {
     <>
       <Hero />
       <ProductCard />
-      <Footer />
+  
     </>
   );
 }

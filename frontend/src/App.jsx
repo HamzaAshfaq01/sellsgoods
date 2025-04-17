@@ -32,7 +32,7 @@ import ComplaintListScreen from "./pages/dashboard/Complaint";
 import EditComplaintScreen from "./pages/dashboard/EditComplaints";
 import MonthlySales from "./pages/dashboard/Sales";
 import SuccessPage from "./pages/Result/Success";
-
+import Footer from "./pages/home/Footer";
 
 function App() {
   return (
@@ -83,7 +83,9 @@ function App() {
         pauseOnHover
         theme="dark"
       />
+       <Footer/>
     </Router>
+   
     </CartProvider>
   );
 }

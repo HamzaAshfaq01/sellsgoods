@@ -172,8 +172,8 @@ export default function Header() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get("/category"); // Replace with actual API endpoint
-        setCategories(data); // Assuming API returns an array of category names
+        const { data } = await axios.get("/category"); 
+        setCategories(data); 
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -246,7 +246,7 @@ export default function Header() {
         scrolled ? "bg-white shadow-md" : "bg-white"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           <Link
             href="/"

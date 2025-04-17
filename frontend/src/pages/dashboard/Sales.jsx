@@ -14,6 +14,7 @@ import {
 } from 'recharts';
 import CountUp from 'react-countup';
 
+
 export default function MonthlySales() {
   const [salesData, setSalesData] = useState([]);
   const [checkedValues, setCheckedValues] = useState(['revenue']);

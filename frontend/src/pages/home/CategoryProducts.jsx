@@ -90,9 +90,9 @@ const CategoryProducts = () => {
   };
 
   return (
-    <div className="relative xl:px-50 lg:px-10 px-5 max-w-[1200px] mx-auto">
+    <div className="relative px-4 sm:px-12 max-w-[2000px]">
   
-      <div className="md:block absolute left-0 top-0 w-[250px] h-full z-10">
+      <div className="md:block  mx-4 sm:mx-12 absolute left-0 top-0 w-[250px] h-full z-10">
         <ProductFilter onFilterChange={handleFilterChange} />
       </div>
 

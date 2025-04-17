@@ -144,7 +144,7 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-[2000px] mx-auto px-4 sm:px-12 py-8">
       <div className="flex justify-between flex-col-reverse gap-[10px] items-start mb-6 md:flex-row md:items-cente">
         <h1 className="text-2xl font-bold text-gray-800 truncate max-w-2xl">
           {product.title}

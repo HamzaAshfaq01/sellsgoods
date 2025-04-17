@@ -3,7 +3,7 @@ import React from "react";
 const HeroShimmers = () => {
   return (
     <div className="flex overflow-hidden space-x-2 py-2 px-8 w-full">
-      {Array(6)
+      {Array(15)
         .fill(0)
         .map((_, index) => (
           <div

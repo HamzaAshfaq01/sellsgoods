@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../../axios";
 import ProductShimmers from "../../shimmers/ProductShimmers";
+import TiltCard from "../../components/TiltCard";
 
 const ProductCard = () => {
   const [categories, setCategories] = useState([]);
@@ -75,7 +76,7 @@ const ProductCard = () => {
   }
 
   return (
-    <div className="2xl:px-50 xl:px-10 px-5">
+    <div className=" max-w-[2000px] mx-auto px-4 sm:px-12">
       {categories.map((category) => {
         const normalizedCategory = category
           .trim()
@@ -91,6 +92,10 @@ const ProductCard = () => {
             <h2 className="text-xl font-bold mb-4">{category}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {productsByCategory[category]?.slice(0, 4).map((product) => (
+                <TiltCard
+                key={product.id || product._id}
+                className="bg-white rounded-lg shadow-lg  group transition duration-300 ease-in-out"
+              >
                 <div
                   key={product.id || product._id}
                   onClick={() => navigate(`/productdetails/${product._id}/view`)}
@@ -102,7 +107,7 @@ const ProductCard = () => {
   className="w-full h-48 object-cover rounded-t-lg"
   onError={(e) => {
     e.target.onerror = null; 
-    e.target.src = '/404.jpg'; 
+    e.target.src = 'https://i0.wp.com/port2flavors.com/wp-content/uploads/2022/07/placeholder-614.png?fit=1200%2C800&ssl=1'; 
   }}
 />
 
@@ -170,6 +175,7 @@ const ProductCard = () => {
                     })}
                   </p>
                 </div>
+                </TiltCard>
               ))}
             </div>
             {productsByCategory[category]?.length > 4 && (

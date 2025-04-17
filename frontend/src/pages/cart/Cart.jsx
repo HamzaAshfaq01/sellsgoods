@@ -117,7 +117,7 @@ const Cart = () => {
   }
 
   return (
-    <div className="min-h-screen p-4 md:p-8 max-w-7xl mx-auto">
+    <div className="min-h-screen p-4 md:p-8 max-w-[2000px] mx-auto">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Shopping Cart</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
