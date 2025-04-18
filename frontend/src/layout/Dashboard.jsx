@@ -34,22 +34,13 @@ icon : <AdminSVG/>
     href: "/dashboard/categories",
     icon: <CategoriesSVG />,
   },
-  {
-    label: "Orders",
-    href: "/dashboard/orders",
-    icon:<OrderSVG/>
-    
-  },
+ 
   {
     label: "Complaints",
     href: "/dashboard/complaints",
     icon: <ComplaintSVG />,
   },
-  {
-    label: "Sales",
-    href: "/dashboard/sales",
-    icon: <SalesSVG />,
-  },
+
   
 
 

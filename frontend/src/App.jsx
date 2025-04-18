@@ -20,8 +20,7 @@ import ViewProductScreen from "./pages/dashboard/ViewProduct";
 import Categories from "./pages/dashboard/Categories";
 import AddCategories from "./pages/dashboard/AddCategories";
 import EditCategoryScreen from "./pages/dashboard/EditCategory";
-import OrdersListing from "./pages/dashboard/Orders";
-import EditOrderScreen from "./pages/dashboard/EditOrders";
+
 import ProductDetail from "./pages/home/ProductDetail";
 import CategoryProducts from "./pages/home/CategoryProducts";
 import { CartProvider } from "./context/CartContext";
@@ -30,7 +29,7 @@ import UsersListScreen from "./pages/dashboard/Users";
 import JazzCashCheckout from "./pages/cart/JazzCashCheckout";
 import ComplaintListScreen from "./pages/dashboard/Complaint";
 import EditComplaintScreen from "./pages/dashboard/EditComplaints";
-import MonthlySales from "./pages/dashboard/Sales";
+
 import SuccessPage from "./pages/Result/Success";
 import Footer from "./pages/home/Footer";
 
@@ -64,10 +63,7 @@ function App() {
           <Route path="products/:id/edit" element={<EditProductScreen />} />
           <Route path="products/:id/view" element={<ViewProductScreen />} />
       
-          <Route path="orders" element={<OrdersListing />} />
-          <Route path="orders/:id/edit" element={<EditOrderScreen />} />
-          <Route path="sales" element={<MonthlySales />} />
-
+   
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
