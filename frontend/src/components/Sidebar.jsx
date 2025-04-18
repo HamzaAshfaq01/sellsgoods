@@ -143,7 +143,7 @@ export default function Sidebar({ isMenuOpen, closeMenu }) {
 
   return (
     <aside
-      className={`fixed top-0 bottom-0 lg:hidden left-[-360px] w-[360px] bg-white shadow-xl z-50 transition-all duration-300 border-b border-gray-200 ${
+      className={`fixed top-0 bottom-0 lg:hidden left-[-460px] w-[460px] bg-white shadow-xl z-50 transition-all duration-300 border-b border-gray-200 ${
         isMenuOpen ? "bg-white shadow-md left-[0]" : "bg-white"
       }`}
     >
