@@ -243,19 +243,22 @@ const deleteProduct = asyncHandler(async (req, res) => {
 });
 const getProducts = asyncHandler(async (req, res) => {
   try {
-    const products = await Product.find()
+    const { city } = req.query;
+
+    const query = city ? { "location.city": city } : {};
+
+    const products = await Product.find(query)
       .populate("category", "name")
       .populate("seller", "name email")
       .sort({ createdAt: -1 });
 
-    // Check for null or undefined categories and filter out invalid products
     const filteredProducts = products.filter(product => product.category && product.category.name);
 
-    // If filteredProducts is empty, return an appropriate response
     if (filteredProducts.length === 0) {
       return res.status(404).json({ message: "No valid products found." });
     }
 
+  
     const categories = [...new Set(filteredProducts.map((product) => product.category.name))];
 
     const productsByCategory = {};
