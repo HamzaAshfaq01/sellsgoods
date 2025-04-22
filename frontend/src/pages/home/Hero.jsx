@@ -43,12 +43,12 @@ const Hero = () => {
 
   return (
     <div className='w-full py-6 px-4 sm:px-12 max-w-[2000px] mx-auto'>
-      <div className='w-full h-[200px] xl:px-50 px-10'>
-        <img src='/hero.png' alt='Hero' className='w-full h-full object-cover rounded-lg shadow-md' />
+      <div className='w-full lg:h-[600px] h-[400px] px-4 sm:px-0 border-none '>
+        <img src='/hero.svg' alt='Hero' className='w-full h-full object-cover rounded-lg' />
       </div>
 
-      <h2 className='text-2xl font-bold text-gray-800 mt-25 mb-4'>Shop by Category</h2>
-      <div className='relative w-full mt-10'>
+      <h2 className='text-2xl font-bold text-gray-800 mt-2 mb-4 sm:justify-start justify-center'>Shop by Category</h2>
+      <div className='relative w-full px-6 sm:px-8 mt-10'>
         <button
           className='absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 px-[14px] rounded-full shadow-md z-10'
           onClick={() => scroll('left')}>
@@ -59,7 +59,7 @@ const Hero = () => {
             categories.map((category, index) => (
               <span
                 key={index}
-                className={`px-4 py-2 bg-white rounded-full shadow-md text-gray-700 text-sm font-medium whitespace-nowrap cursor-pointer hover:bg-gray-200 ${
+                className={`px-4 py-2 bg-white rounded-full shadow-md text-gray-700 text-sm font-medium whitespace-nowrap cursor-pointer hover:bg-gray-20  ${
                   index === categories.length - 1 ? 'mr-10' : ''
                 }`}
                 onClick={() => handleCategoryClick(category.name)}>

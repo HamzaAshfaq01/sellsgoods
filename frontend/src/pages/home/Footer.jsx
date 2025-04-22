@@ -1,8 +1,5 @@
-
 import React, {useEffect, useState} from 'react';
 import { Link } from "react-router-dom";
-
-
 import {Facebook, Instagram, Youtube, Twitter, Mail} from 'lucide-react';
 
 const Footer = () => {
@@ -37,10 +34,8 @@ const Footer = () => {
     setIsClient(true); 
   }, []);
   return (
-    <div className='w-full flex-col mx-auto justify-center flex-1'>
-   
-     
-      <footer className='bg-[#0f1c3c] pt-16 pb-8 px-4 md:px-12 mt-auto '>
+    <div className='w-full flex-col mx-auto justify-center flex-1'>  
+      <footer className='bg-[#0f1c3c] pt-16 pb-8 px-4 md:px-12 mt-auto'>
         <div className='mx-auto'>
     
           <div className='grid grid-cols-1 md:grid-cols-5 gap-8 mt-6'>

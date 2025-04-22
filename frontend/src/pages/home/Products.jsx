@@ -4,7 +4,7 @@ import { AutoComplete, Input } from "antd";
 import axios from "../../axios";
 import ProductShimmers from "../../shimmers/ProductShimmers";
 import TiltCard from "../../components/TiltCard";
-
+import { Button, Result } from 'antd';
 const ProductCard = () => {
   const [categories, setCategories] = useState([]);
   const [productsByCategory, setProductsByCategory] = useState({});
@@ -18,21 +18,33 @@ const ProductCard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      if (cityInput.trim() !== "") {
+        setCity(cityInput);
+      } else {
+        setCity("");
+      }
+    }, 3000);
+
+    return () => clearTimeout(debounceTimer);
+  }, [cityInput]);
+
+  useEffect(() => {
     const fetchProducts = async (selectedCity = "") => {
       setLoading(true);
-      setNoResults(false); 
+      setNoResults(false);
       try {
         const response = await axios.get(
           selectedCity ? `/products/getproducts?city=${selectedCity}` : "/products/getproducts"
         );
-    
+
         const productsByCategory = response.data.productsByCategory || {};
         const categories = response.data.categories || [];
-    
+
         const hasProducts = Object.values(productsByCategory).some(
           (products) => products.length > 0
         );
-    
+
         if (!hasProducts) {
           setProductsByCategory({});
           setCategories([]);
@@ -41,7 +53,7 @@ const ProductCard = () => {
           setProductsByCategory(productsByCategory);
           setCategories(categories);
         }
-    
+
         const cities = [];
         Object.values(productsByCategory).forEach((products) => {
           products.forEach((product) => {
@@ -50,12 +62,11 @@ const ProductCard = () => {
             }
           });
         });
-    
+
         const uniqueCities = [...new Set(cities)];
         setCityOptions(uniqueCities.map((city) => ({ value: city })));
       } catch (error) {
         console.error("Error fetching products:", error);
-    
         if (error.response && error.response.status === 404) {
           setProductsByCategory({});
           setCategories([]);
@@ -110,61 +121,43 @@ const ProductCard = () => {
     }));
   };
 
- 
-  const handleCityChange = (value) => {
-    setCityInput(value); 
+  const handleSearchTrigger = () => {
+    setCity(cityInput);
   };
-  const handleSearch = (value) => {
-   
-    if (value.trim() === "") {
-      setCity("");
-      fetchProducts(); 
-    } else {
-      setCity(value); 
-      fetchProducts(value); 
-    }
-  };
-  
 
   if (loading) {
-    return (
-      <ProductShimmers/>
-    );
+    return <ProductShimmers />;
   }
 
   return (
     <div className="max-w-[2000px] mx-auto px-4 sm:px-12">
-     
-      <div className="mb-6 max-w-sm">
-      <AutoComplete
-    options={cityOptions}
-    style={{ width: "100%" }}
-    value={cityInput}
-    onChange={(value) => setCityInput(value)} 
-    onSearch={handleSearch} 
-    onSelect={(value) => {
-      setCity(value);
-      setCityInput(value); 
-      fetchProducts(value); 
-    }}
-    placeholder="Search by city..."
-    allowClear
-  >
-    <Input
-      onPressEnter={() => handleSearch(cityInput)} 
-      suffix={
-        <span
-          onClick={() => handleSearch(cityInput)} 
-          style={{ cursor: "pointer", color: "#0f1c3c", fontWeight: 600 }}
+      <div className="mb-6 flex justify-center">
+        <AutoComplete
+          options={cityOptions}
+          style={{ width: 800 }}
+          value={cityInput}
+          onChange={setCityInput}
+          onSelect={(value) => {
+            setCityInput(value);
+            setCity(value);
+          }}
+          placeholder="Search by city..."
+          allowClear
         >
-          Search
-        </span>
-      }
-    />
-  </AutoComplete>
+          <Input
+            onPressEnter={handleSearchTrigger}
+            suffix={
+              <span
+                onClick={handleSearchTrigger}
+                style={{ cursor: "pointer", color: "#0f1c3c", fontWeight: 600, }}
+              >
+                Search
+              </span>
+            }
+          />
+        </AutoComplete>
       </div>
 
-      
       {categories.map((category) => {
         const normalizedCategory = category
           .trim()
@@ -193,8 +186,8 @@ const ProductCard = () => {
                       alt={product.title}
                       className="w-full h-48 object-cover rounded-t-lg"
                       onError={(e) => {
-                        e.target.onerror = null; 
-                        e.target.src = 'https://i0.wp.com/port2flavors.com/wp-content/uploads/2022/07/placeholder-614.png?fit=1200%2C800&ssl=1'; 
+                        e.target.onerror = null;
+                        e.target.src = 'https://i0.wp.com/port2flavors.com/wp-content/uploads/2022/07/placeholder-614.png?fit=1200%2C800&ssl=1';
                       }}
                     />
                     {product?.images?.length > 1 && (
@@ -254,7 +247,6 @@ const ProductCard = () => {
                     <p className="text-gray-600 text-sm mt-2">{product?.shortDesc}</p>
                   </div>
                 </TiltCard>
-                
               ))}
             </div>
             {productsByCategory[category]?.length > 4 && (
@@ -269,11 +261,12 @@ const ProductCard = () => {
         );
       })}
 
-      {/* Display "No Results" */}
       {noResults && (
-        <div className="text-center mt-8 text-xl font-semibold text-red-600">
-          No products found for this search.
-        </div>
+        <Result
+        status="404"
+        title="404"
+        subTitle="Apologies, the results for this city are not available. Please try searching again."
+      />
       )}
     </div>
   );
