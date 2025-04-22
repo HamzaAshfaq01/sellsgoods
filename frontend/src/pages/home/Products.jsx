@@ -131,6 +131,7 @@ const ProductCard = () => {
 
   return (
     <div className="max-w-[2000px] mx-auto px-4 sm:px-12">
+<<<<<<< Updated upstream
       <div className="mb-6 flex justify-center">
         <AutoComplete
           options={cityOptions}
@@ -143,6 +144,30 @@ const ProductCard = () => {
           }}
           placeholder="Search by city..."
           allowClear
+=======
+     
+      <div className="mb-6 flex justify-center">
+      <AutoComplete
+    options={cityOptions}
+    style={{ width: 200 }}
+    value={cityInput}
+    onChange={(value) => setCityInput(value)} 
+    onSearch={handleSearch} 
+    onSelect={(value) => {
+      setCity(value);
+      setCityInput(value); 
+      fetchProducts(value); 
+    }}
+    placeholder="Search by city..."
+    allowClear
+  >
+    <Input
+      onPressEnter={() => handleSearch(cityInput)} 
+      suffix={
+        <span
+          onClick={() => handleSearch(cityInput)} 
+          style={{ cursor: "pointer", color: "#0f1c3c", fontWeight: 600 }}
+>>>>>>> Stashed changes
         >
           <Input
             onPressEnter={handleSearchTrigger}
