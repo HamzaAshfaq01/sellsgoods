@@ -43,7 +43,7 @@ const Hero = () => {
 
   return (
     <div className='w-full py-6 px-4 sm:px-12 max-w-[2000px] mx-auto'>
-      <div className='w-full lg:h-[600px] h-[400px] px-4 sm:px-0 border-none '>
+      <div className='w-full sm:h-[600px] h-[300px] px-0 sm:px-0 border-none '>
         <img src='/hero.svg' alt='Hero' className='w-full h-full object-cover rounded-lg' />
       </div>
 
@@ -54,13 +54,13 @@ const Hero = () => {
           onClick={() => scroll('left')}>
           ◀
         </button>
-        <div ref={sliderRef} className='flex overflow-hidden ml-5 mr-[20px] space-x-2 scrollbar-hide w-full py-2 px-8'>
+        <div ref={sliderRef} className='flex overflow-hidden mr-[20px] space-x-2 scrollbar-hide w-full py-2 px-8'>
           {Array.isArray(categories) && categories.length > 0 ? (
             categories.map((category, index) => (
               <span
                 key={index}
                 className={`px-4 py-2 bg-white rounded-full shadow-md text-gray-700 text-sm font-medium whitespace-nowrap cursor-pointer hover:bg-gray-20  ${
-                  index === categories.length - 1 ? 'mr-10' : ''
+                  index === categories.length - 1 ? 'mr-5' : ''
                 }`}
                 onClick={() => handleCategoryClick(category.name)}>
                 {category.name}
