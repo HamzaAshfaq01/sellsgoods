@@ -44,7 +44,8 @@ function App() {
         <Route path="/success" element={<SuccessPage/>} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/jazzcash-checkout" element={<JazzCashCheckout />} />
-        <Route path="productdetails/:id/view" element={<ProductDetail key={location.pathname}/> } />
+        <Route path="productdetails/:id/view" element={<ProductDetail />} />
+
         <Route path="/category/:category" element={<CategoryProducts />} />
         <Route path="/login" element={<SignIn />} />
         <Route path="/register" element={<Register />} />

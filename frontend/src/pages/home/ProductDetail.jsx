@@ -201,7 +201,7 @@ const ProductDetail = () => {
                   className="w-full h-full object-contain"
                   onError={(e) => {
                     e.target.onerror = null; 
-                    e.target.src = '/404.jpg'; 
+                    e.target.src = 'https://i0.wp.com/port2flavors.com/wp-content/uploads/2022/07/placeholder-614.png?fit=1200%2C800&ssl=1'; 
                   }}
                 />
               ) : (

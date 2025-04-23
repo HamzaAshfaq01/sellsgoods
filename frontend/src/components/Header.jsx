@@ -248,19 +248,17 @@ export default function Header() {
     >
       <div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
-          <Link
-            href="/"
-            className="flex items-center gap-3 transition-transform hover:scale-105"
-          >
-            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-[c] rounded-full overflow-hidden shadow-sm flex items-center justify-center">
-              <LogoSVG />
-            </div>
-            <div className="flex flex-col">
-            <Link to="/" className="text-xl sm:text-2xl font-bold tracking-tight text-[#0f1c3c] cursor-pointer">
-    Sells&Goods
-  </Link>
-            </div>
-          </Link>
+        <Link to="/" className="flex items-center gap-3 transition-transform hover:scale-105">
+  <div className="h-9 w-9 sm:h-10 sm:w-10 bg-[c] rounded-full overflow-hidden shadow-sm flex items-center justify-center">
+    <LogoSVG />
+  </div>
+  <div className="flex flex-col">
+    <span className="text-xl sm:text-2xl font-bold tracking-tight text-[#0f1c3c] cursor-pointer">
+      Sells&Goods
+    </span>
+  </div>
+</Link>
+
 
           <button
             className="menu-toggle lg:hidden bg-gray-100 p-2 rounded-md hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-[#0f1c3c]/50"
