@@ -10,16 +10,19 @@ const UsersListScreen = () => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
         fetchUsers();
-    }, []);
+    }, [currentPage]);
 
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.get("/users");
-            setUsers(data);
+            const { data } = await axios.get(`/users?page=${currentPage}&limit=10`);
+            setUsers(data.users);
+            setTotalPages(data.totalPages);
         } catch (error) {
             console.error("Error fetching users:", error);
             toast.error("Failed to fetch users");
@@ -33,8 +36,8 @@ const UsersListScreen = () => {
         setIsDeleting(true);
         try {
             await axios.delete(`/users/${userToDelete._id}`);
-            setUsers(users.filter(u => u._id !== userToDelete._id));
             toast.success("User deleted successfully");
+            fetchUsers(); 
         } catch (error) {
             console.error("Error deleting user:", error);
             toast.error("Failed to delete user");
@@ -58,6 +61,12 @@ const UsersListScreen = () => {
         return new Date(dateString).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
     };
 
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
+
     return (
         <React.Fragment>
             <div className="flex justify-between items-center mb-6">
@@ -70,40 +79,91 @@ const UsersListScreen = () => {
                         <FaSpinner className="animate-spin text-4xl text-[#0f1c3c]" />
                     </div>
                 ) : (
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {users.map((user) => (
-                                <tr key={user._id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user._id}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.name}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.phone}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.role}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(user.createdAt)}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <button onClick={() => openDeleteModal(user)} className="text-white bg-red-500 hover:bg-red-600 p-2 rounded-md">
-                                            Delete
-                                        </button>
-                                    </td>
+                    <>
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
+                                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {users.map((user) => (
+                                    <tr key={user._id} className="hover:bg-gray-50">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user._id}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.name}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.phone}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.role}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDate(user.createdAt)}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <button onClick={() => openDeleteModal(user)} className="text-white bg-red-500 hover:bg-red-600 p-2 rounded-md">
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
+                  
+                        <div className="flex justify-center items-center gap-2 my-4">
+                         
+                            <button
+                                className={`px-4 py-2 rounded-md cursor-pointer ${
+                                    currentPage === 1 || totalPages === 0
+                                        ? "text-gray-500 cursor-not-allowed"
+                                        : "text-[#0f1c3c] hover:bg-[#0f1c3c] hover:text-gray-300"
+                                }`}
+                                disabled={currentPage === 1 || totalPages === 0}
+                                onClick={() => handlePageChange(currentPage - 1)}
+                            >
+                                &lt;
+                            </button>
+
+                            {[...Array(totalPages)].map((_, index) => (
+                                <button
+                                    key={index + 1}
+                                    className={`px-4 py-2 rounded-md cursor-pointer ${
+                                        currentPage === index + 1
+                                            ? "bg-[#0f1c3c] text-white cursor-not-allowed"
+                                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                    }`}
+                                    onClick={() => handlePageChange(index + 1)}
+                                >
+                                    {index + 1}
+                                </button>
                             ))}
-                        </tbody>
-                    </table>
+
+                            
+                            <button
+                                className={`px-4 py-2 rounded-md cursor-pointer ${
+                                    currentPage === totalPages || totalPages === 0
+                                        ? "text-gray-500 cursor-not-allowed"
+                                        : "text-[#0f1c3c] hover:bg-[#0f1c3c] hover:text-gray-300"
+                                }`}
+                                disabled={currentPage === totalPages || totalPages === 0}
+                                onClick={() => handlePageChange(currentPage + 1)}
+                            >
+                                &gt;
+                            </button>
+                        </div>
+                    </>
                 )}
             </div>
 
-            <DeleteConfirmationModal isOpen={deleteModalOpen} onClose={closeDeleteModal} onConfirm={handleDeleteConfirm} itemName={userToDelete?.name || ""} isDeleting={isDeleting} />
+            <DeleteConfirmationModal
+                isOpen={deleteModalOpen}
+                onClose={closeDeleteModal}
+                onConfirm={handleDeleteConfirm}
+                itemName={userToDelete?.name || ""}
+                isDeleting={isDeleting}
+            />
         </React.Fragment>
     );
 };

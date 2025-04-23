@@ -50,11 +50,11 @@ const SellerDropdownItems = [
     href: "/dashboard/products",
     icon: <ProductSVG />,
   },
-  // {
-  //   label: "Orders",
-  //   href: "/dashboard/orderlist",
-  //   icon: <OrderSVG />,
-  // },
+  {
+    label: "Orders",
+    href: "/dashboard/orderlist",
+    icon: <OrderSVG />,
+  },
   // {
   //   label: "Users",
   //   href: "/dashboard/userlist",
@@ -67,11 +67,11 @@ const BuyerDropdownItems = [
     href: "/dashboard/profile",
     icon: <UserSVG />,
   },
-  // {
-  //   label: "Orders",
-  //   href: "/dashboard/orderlist",
-  //   icon: <OrderSVG />,
-  // },
+  {
+    label: "Orders",
+    href: "/dashboard/orderlist",
+    icon: <OrderSVG />,
+  },
   // {
   //   label: "Users",
   //   href: "/dashboard/userlist",

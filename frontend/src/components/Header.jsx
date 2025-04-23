@@ -56,12 +56,12 @@ const AdminDropdownItems = [
     label: "Complaints",
     href: "/dashboard/complaints",
     icon: <ComplaintSVG />,
-  }
-  // {
-  //   label: "Orders",
-  //   href: "/dashboard/orderlist",
-  //   icon: <OrderSVG />,
-  // },
+  },
+  {
+    label: "Orders",
+    href: "/dashboard/orderlist",
+    icon: <OrderSVG />,
+  },
   // {
   //   label: "Users",
   //   href: "/dashboard/userlist",
@@ -89,12 +89,12 @@ const SellerDropdownItems = [
       label: "Complaints",
       href: "/dashboard/complaints",
       icon: <ComplaintSVG />,
-    }
-  // {
-  //   label: "Orders",
-  //   href: "/dashboard/orderlist",
-  //   icon: <OrderSVG />,
-  // },
+    },
+  {
+    label: "Orders",
+    href: "/dashboard/orderlist",
+    icon: <OrderSVG />,
+  },
   // {
   //   label: "Users",
   //   href: "/dashboard/userlist",
@@ -117,12 +117,12 @@ const BuyerDropdownItems = [
       label: "Complaints",
       href: "/dashboard/complaints",
       icon: <ComplaintSVG />,
-    }
-  // {
-  //   label: "Orders",
-  //   href: "/dashboard/orderlist",
-  //   icon: <OrderSVG />,
-  // },
+    },
+  {
+    label: "Orders",
+    href: "/dashboard/orderlist",
+    icon: <OrderSVG />,
+  },
   // {
   //   label: "Users",
   //   href: "/dashboard/userlist",
