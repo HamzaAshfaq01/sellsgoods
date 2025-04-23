@@ -20,7 +20,8 @@ import ViewProductScreen from "./pages/dashboard/ViewProduct";
 import Categories from "./pages/dashboard/Categories";
 import AddCategories from "./pages/dashboard/AddCategories";
 import EditCategoryScreen from "./pages/dashboard/EditCategory";
-
+import OrdersListing from "./pages/dashboard/Orders";
+import EditOrderScreen from "./pages/dashboard/EditOrders";
 import ProductDetail from "./pages/home/ProductDetail";
 import CategoryProducts from "./pages/home/CategoryProducts";
 import { CartProvider } from "./context/CartContext";
@@ -63,7 +64,10 @@ function App() {
           <Route path="products/:id/edit" element={<EditProductScreen />} />
           <Route path="products/:id/view" element={<ViewProductScreen />} />
       
-   
+          <Route path="orders" element={<OrdersListing />} />
+          <Route path="orders/:id/edit" element={<EditOrderScreen />} />
+      
+
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -44,19 +44,30 @@ const getOrders = asyncHandler(async (req, res) => {
     }
 
     const userId = req.user._id;
-    console.log("Fetching orders for User ID:", userId);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-   
-    const orders = await Order.find({
+    const query = {
       $or: [{ buyerId: userId }, { sellerId: userId }],
-    })
-      .populate("buyerId", "name email") 
-      .populate("items.productId", "title price") 
-      .sort({ createdAt: -1 });
+    };
 
-    console.log("Orders Found:", orders);
+    const totalOrders = await Order.countDocuments(query);
+    const totalPages = Math.ceil(totalOrders / limit);
 
-    res.status(200).json(orders);
+    const orders = await Order.find(query)
+      .populate("buyerId", "name email")
+      .populate("items.productId", "title price")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.status(200).json({
+      orders,
+      currentPage: page,
+      totalPages,
+      totalOrders,
+    });
   } catch (error) {
     console.error("Error fetching orders:", error);
     res.status(500).json({ message: "Failed to fetch orders" });
@@ -64,23 +75,35 @@ const getOrders = asyncHandler(async (req, res) => {
 });
 
 
+
 const getAllOrders = asyncHandler(async (req, res) => {
   try {
-    console.log("Fetching all orders...");
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const totalOrders = await Order.countDocuments();
+    const totalPages = Math.ceil(totalOrders / limit);
 
     const orders = await Order.find()
-      .populate("buyerId", "name email") 
-      .populate("items.productId", "title price") 
-      .sort({ createdAt: -1 });
+      .populate("buyerId", "name email")
+      .populate("items.productId", "title price")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
-    console.log("Total Orders Found:", orders.length);
-
-    res.status(200).json(orders);
+    res.status(200).json({
+      orders,
+      currentPage: page,
+      totalPages,
+      totalOrders,
+    });
   } catch (error) {
     console.error("Error fetching all orders:", error);
     res.status(500).json({ message: "Failed to fetch all orders" });
   }
 });
+
 
 
 
