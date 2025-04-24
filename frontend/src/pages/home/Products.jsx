@@ -5,6 +5,8 @@ import axios from "../../axios";
 import ProductShimmers from "../../shimmers/ProductShimmers";
 import TiltCard from "../../components/TiltCard";
 import { Button, Result } from 'antd';
+import CategorySlider from "./CategorySlider";
+
 const ProductCard = () => {
   const [categories, setCategories] = useState([]);
   const [productsByCategory, setProductsByCategory] = useState({});
@@ -131,32 +133,44 @@ const ProductCard = () => {
 
   return (
     <div className="max-w-[2000px] mx-auto px-4 sm:px-12">
-      <div className="mb-6 flex justify-center">
-        <AutoComplete
-          options={cityOptions}
-          style={{ width: 800 }}
-          value={cityInput}
-          onChange={setCityInput}
-          onSelect={(value) => {
-            setCityInput(value);
-            setCity(value);
-          }}
-          placeholder="Search by city..."
-          allowClear
-        >
-          <Input
-            onPressEnter={handleSearchTrigger}
-            suffix={
-              <span
-                onClick={handleSearchTrigger}
-                style={{ cursor: "pointer", color: "#0f1c3c", fontWeight: 600, }}
-              >
-                Search
-              </span>
-            }
-          />
-        </AutoComplete>
-      </div>
+             <h2 className="text-xl font-bold mb-4 mt-12 flex sm:justify-start justify-center" >Switch to Category</h2>
+       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center mb-6 mt-4">
+
+
+  <div className="w-full order-1 sm:order-1">
+ 
+    <CategorySlider />
+  </div>
+
+
+  <div className="w-full order-2 sm:order-2 flex justify-center sm:justify-end">
+    <AutoComplete
+      options={cityOptions}
+      style={{ width: '100%', maxWidth: 920 }}
+      value={cityInput}
+      onChange={setCityInput}
+      onSelect={(value) => {
+        setCityInput(value);
+        setCity(value);
+      }}
+      placeholder="Search by city..."
+      allowClear
+    >
+      <Input
+        onPressEnter={handleSearchTrigger}
+        suffix={
+          <span
+            onClick={handleSearchTrigger}
+            style={{ cursor: "pointer", color: "#0f1c3c", fontWeight: 600 }}
+          >
+            Search
+          </span>
+        }
+      />
+    </AutoComplete>
+  </div>
+</div>
+
 
       {categories.map((category) => {
         const normalizedCategory = category
