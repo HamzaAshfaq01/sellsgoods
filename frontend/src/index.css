@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 
+*{
+  @apply select-none;
+}
 
 *,body,html{
     scroll-behavior: smooth;
