@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Result } from 'antd';
 import { Link } from 'react-router-dom';
 
-const SuccessPage= () => (
+const Success= () => (
   <Result
     status="success"
     title="Purchase Successful!"
@@ -13,9 +13,9 @@ const SuccessPage= () => (
       </Link>,
       <Link to="/dashboard/orders" key="orders">
         <Button>Go To Orders</Button>
-      </Link>,
+      </Link>
     ]}
   />
 );
 
-export default SuccessPage;
+export default Success;
