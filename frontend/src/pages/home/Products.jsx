@@ -136,7 +136,7 @@ const ProductCard = () => {
 <div className="grid grid-cols-2 gap-4 items-center mb-6 mt-4">
 
   <div className="w-full order-1 md:order-1 md:col-span-1 col-span-2">
-    <h2 className="text-xl font-bold mb-1">
+    <h2 className="text-xl text-[#0f1c3c] font-bold mb-1">
       Explore various product categories tailored to your interests.
     </h2>
   </div>

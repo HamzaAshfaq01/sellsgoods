@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "../../axios";
+import pakistaniCities from "../../assets/data/cities";
 
 const AddProductScreen = () => {
   const navigate = useNavigate();
@@ -10,6 +11,9 @@ const AddProductScreen = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [query, setQuery] = useState('');
+  const [filteredCities, setFilteredCities] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -62,6 +66,37 @@ const AddProductScreen = () => {
       ...prev,
       contact: { ...prev.contact, [name]: value },
     }));
+  };
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    handleInputChange(e);
+
+    const filtered = pakistaniCities.filter((city) =>
+      city.toLowerCase().startsWith(value.toLowerCase())
+    );
+    setFilteredCities(value ? filtered : pakistaniCities);
+    setShowDropdown(true);
+  };
+  const handleCitySelect = (city) => {
+    const event = {
+      target: {
+        name: 'city',
+        value: city,
+      },
+    };
+    handleInputChange(event);
+    setQuery(city);
+    setFilteredCities([]);
+    setShowDropdown(false);
+  };
+
+  const handleFocus = () => {
+    setFilteredCities(pakistaniCities);
+    setShowDropdown(true);
+  };
+  const handleBlur = () => {
+    setTimeout(() => setShowDropdown(false), 100); 
   };
 
   const handleConditionChange = (e) => {
@@ -161,6 +196,7 @@ const AddProductScreen = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -432,24 +468,40 @@ const AddProductScreen = () => {
                 required
               />
             </div>
-            <div>
-              <label
-                className="block text-sm font-medium text-gray-700 mb-1"
-                htmlFor="city"
-              >
-                City <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="city"
-                name="city"
-                value={formData.location.city}
-                onChange={handleLocationChange}
-                className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-500 focus:outline-none border border-gray-200 transition-all focus:border-[#0f1c3c]"
-                placeholder="City"
-                required
-              />
-            </div>
+            <div className="relative">
+      <label
+        className="block text-sm font-medium text-gray-700 mb-1"
+        htmlFor="city"
+      >
+        City <span className="text-red-500">*</span>
+      </label>
+      <input
+        type="text"
+        id="city"
+        name="city"
+        value={query}
+        onChange={handleSearchChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        autoComplete="off"
+        placeholder="Start typing a city..."
+        className="w-full py-2 px-4 rounded-lg bg-gray-100 text-gray-900 placeholder-gray-500 focus:outline-none border border-gray-200 transition-all focus:border-[#0f1c3c]"
+        required
+      />
+      {showDropdown && filteredCities.length > 0 && (
+        <ul className="absolute z-10 w-full bg-white shadow-md max-h-60 overflow-y-auto rounded-md border mt-1">
+          {filteredCities.map((city, index) => (
+            <li
+              key={index}
+              onClick={() => handleCitySelect(city)}
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+            >
+              {city}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
           </div>
         </div>
 
