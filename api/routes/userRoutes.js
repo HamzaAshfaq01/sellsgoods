@@ -21,6 +21,10 @@ router
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
 router.route("/profile/change-password").put(protect, updateUserPassword);
+router
+  .route("/:id")
+  .delete(protect, admin, deleteUser)
+
 // router.post("/logout", logoutUser);
 // router
 //   .route("/:id")
