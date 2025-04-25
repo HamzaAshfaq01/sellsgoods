@@ -78,18 +78,18 @@ const AddProductScreen = () => {
     setFilteredCities(value ? filtered : pakistaniCities);
     setShowDropdown(true);
   };
-  const handleCitySelect = (city) => {
-    const event = {
-      target: {
-        name: 'city',
-        value: city,
+  const handleCitySelect = (selectedCity) => {
+    setQuery(selectedCity);
+    setFormData((prev) => ({
+      ...prev,
+      location: {
+        ...prev.location,
+        city: selectedCity,
       },
-    };
-    handleInputChange(event);
-    setQuery(city);
-    setFilteredCities([]);
+    }));
     setShowDropdown(false);
   };
+  
 
   const handleFocus = () => {
     setFilteredCities(pakistaniCities);
