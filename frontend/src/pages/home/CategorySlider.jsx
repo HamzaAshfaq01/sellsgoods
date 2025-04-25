@@ -1,4 +1,3 @@
-// components/CategorySlider.js
 import { useEffect, useState, useRef } from 'react';
 import axios from '../../axios';
 import HeroShimmers from '../../shimmers/HeroShimmers';

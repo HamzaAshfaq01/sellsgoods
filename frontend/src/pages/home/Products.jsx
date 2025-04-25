@@ -133,20 +133,19 @@ const ProductCard = () => {
 
   return (
     <div className="max-w-[2000px] mx-auto px-4 sm:px-12">
-             <h2 className="text-xl font-bold mb-4 mt-12 flex sm:justify-start justify-center" >Switch to Category</h2>
-       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center mb-6 mt-4">
+<div className="grid grid-cols-2 gap-4 items-center mb-6 mt-4">
 
-
-  <div className="w-full order-1 sm:order-1">
- 
-    <CategorySlider />
+  <div className="w-full order-1 md:order-1 md:col-span-1 col-span-2">
+    <h2 className="text-xl font-bold mb-1">
+      Explore various product categories tailored to your interests.
+    </h2>
   </div>
 
 
-  <div className="w-full order-2 sm:order-2 flex justify-center sm:justify-end">
+  <div className="w-full md:col-span-1 col-span-2 order-3 md:order-2 mb-1 flex justify-end">
     <AutoComplete
       options={cityOptions}
-      style={{ width: '100%', maxWidth: 920 }}
+      style={{ width: '100%', maxWidth: 3500 }}
       value={cityInput}
       onChange={setCityInput}
       onSelect={(value) => {
@@ -169,8 +168,12 @@ const ProductCard = () => {
       />
     </AutoComplete>
   </div>
-</div>
 
+
+  <div className="w-full col-span-2 order-2 md:order-3">
+    <CategorySlider />
+  </div>
+</div>
 
       {categories.map((category) => {
         const normalizedCategory = category
