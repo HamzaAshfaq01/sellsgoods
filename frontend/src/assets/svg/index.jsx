@@ -149,6 +149,22 @@ const ComplaintSVG = () => (
     />
   </svg>
 );
+const FilterSVG = () => (
+  <svg
+    className="h-5 w-5"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M3 4h18M6 10h12M10 16h4"
+    />
+  </svg>
+);
+
 const SalesSVG = () => (
   <svg
     className="h-5 w-5"
@@ -294,5 +310,6 @@ export {
   CategoriesSVG,
   AdminSVG,
   ComplaintSVG,
-  SalesSVG
+  SalesSVG,
+  FilterSVG
 };

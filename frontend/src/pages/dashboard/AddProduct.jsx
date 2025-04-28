@@ -122,18 +122,16 @@ const AddProductScreen = () => {
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length + formData?.images?.length > 12) {
+    if (files.length + (formData?.images?.length || 0) > 12) {
       alert("You can upload a maximum of 12 photos.");
       return;
     }
     const filePreviews = files.map((file) => URL.createObjectURL(file));
-    if (files?.length == 1) {
-      setFormData((prev) => ({ ...prev, images: [...prev.images, files[0]] }));
-    } else {
-      setFormData((prev) => ({ ...prev, images: [...prev.images, files] }));
-    }
+    
+    setFormData((prev) => ({ ...prev, images: [...(prev.images || []), ...files] }));
     setImagePreviews((prevPreviews) => [...prevPreviews, ...filePreviews]);
   };
+  
 
   const handleRemoveImage = (index) => {
     const updatedImages = [...formData.images];

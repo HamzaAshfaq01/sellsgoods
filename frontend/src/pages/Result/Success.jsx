@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 const Success= () => (
   <Result
+  style={{marginTop:205}}
     status="success"
     title="Purchase Successful!"
     subTitle=""

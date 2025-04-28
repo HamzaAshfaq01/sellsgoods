@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import axios from "../../axios";
+import { FilterSVG } from "../../assets/svg";
 
 const ProductFilter = ({ onFilterChange }) => {
   const navigate = useNavigate();
@@ -98,26 +99,37 @@ const ProductFilter = ({ onFilterChange }) => {
 
   return (
     <>
-      <button
-        className="md:hidden bg-[#0f1c3c] text-white py-2 px-4 rounded-lg fixed top-4 right-4 z-20"
-        onClick={() => setIsFilterOpen(true)}
-      >
-        Open Filters
-      </button>
+{!isFilterOpen && (
+  <div className="flex justify-end mx-4 my-4 md:hidden">
+    <button
+      className="bg-[#0f1c3c] text-white py-2 px-4 rounded-lg shadow-xl cursor-pointer"
+      onClick={() => setIsFilterOpen(true)}
+      style={{
+        transform: 'translateZ(0)',
+        willChange: 'transform',
+      }}
+    >
+     <FilterSVG/>
+    </button>
+  </div>
+)}
+
+
+
       <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-30 flex justify-end md:justify-start transition-transform duration-300 ${
-          isFilterOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed inset-0 bg-white bg-opacity-50 h-[500px] z-30 flex justify-end md:justify-start transition-transform duration-300 ${
+          isFilterOpen ? "translate-x-0 mt-15 h-[500px]" : "translate-x-full"
         } md:translate-x-0 md:relative md:bg-transparent`}
       >
-        <div className="bg-white shadow-md rounded-lg p-4 w-full md:w-64 h-full md:h-full relative overflow-y-auto">
+        <div className=" shadow-md rounded-lg p-4 w-full md:w-64 h-full md:h-full relative overflow-y-auto ">
           <button
-            className="absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-700 md:hidden"
+            className="absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-700 md:hidden z-50 cursor-pointer"
             onClick={() => setIsFilterOpen(false)}
           >
             ✕
           </button>
 
-          <h3 className="text-lg font-bold mb-4 text-[#0f1c3c]">Filters</h3>
+          <h2 className="text-2xl font-bold mb-6 text-[#0f1c3c]">Filters</h2>
 
           <div className="mb-4">
             <label className="block text-sm font-semibold text-gray-700">Search</label>
@@ -206,7 +218,7 @@ const ProductFilter = ({ onFilterChange }) => {
           <div style={{ marginTop: dropdownOpen ? `${dropdownHeight}px` : '16px' }}>
             <button
               onClick={applyFilters}
-              className="w-full bg-[#0f1c3c] text-white py-2 rounded-lg hover:bg-[#0d172e] transition"
+              className="w-full bg-[#0f1c3c] text-white py-2 rounded-lg hover:bg-[#0d172e] transition "
             >
               Apply Filters
             </button>

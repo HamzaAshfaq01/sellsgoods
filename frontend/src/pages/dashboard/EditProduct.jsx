@@ -133,20 +133,21 @@ const EditProductScreen = () => {
     const files = Array.from(e.target.files);
     const totalImages =
       existingImages.length + formData.newImages.length + files.length;
-
+  
     if (totalImages > 12) {
       toast.warning("You can have a maximum of 12 photos in total.");
       return;
     }
-
+  
     const filePreviews = files.map((file) => URL.createObjectURL(file));
-
+  
     setFormData((prev) => ({
       ...prev,
       newImages: [...prev.newImages, ...files],
     }));
     setNewImagePreviews((prevPreviews) => [...prevPreviews, ...filePreviews]);
   };
+  
 
   const handleRemoveNewImage = (index) => {
     const updatedImages = [...formData.newImages];
