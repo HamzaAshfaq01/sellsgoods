@@ -186,12 +186,6 @@ const SalesSVG = () => (
     />
   </svg>
 );
-
-
-
-
-
-
 const AdminSVG = () => (
   <svg
     className="h-5 w-5"

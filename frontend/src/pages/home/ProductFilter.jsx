@@ -1,23 +1,23 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
-import axios from "../../axios";
-import { FilterSVG } from "../../assets/svg";
+import {useState, useEffect, useRef} from 'react';
+import {useNavigate, useParams, useLocation} from 'react-router-dom';
+import axios from '../../axios';
+import {FilterSVG} from '../../assets/svg';
 
-const ProductFilter = ({ onFilterChange }) => {
+const ProductFilter = ({onFilterChange}) => {
   const navigate = useNavigate();
-  const { category: currentCategory } = useParams();
+  const {category: currentCategory} = useParams();
   const location = useLocation();
   const dropdownRef = useRef(null);
   const dropdownContentRef = useRef(null);
-  
+
   const queryParams = new URLSearchParams(location.search);
-  const initialSearch = queryParams.get("search") || "";
-  const initialDate = queryParams.get("date") || "";
-  const initialCondition = queryParams.get("condition") ? queryParams.get("condition").split(",") : [];
+  const initialSearch = queryParams.get('search') || '';
+  const initialDate = queryParams.get('date') || '';
+  const initialCondition = queryParams.get('condition') ? queryParams.get('condition').split(',') : [];
   const initialCategories = currentCategory
     ? [decodeURIComponent(currentCategory)]
-    : queryParams.get("categories")
-    ? queryParams.get("categories").split(",")
+    : queryParams.get('categories')
+    ? queryParams.get('categories').split(',')
     : [];
 
   const [search, setSearch] = useState(initialSearch);
@@ -28,37 +28,30 @@ const ProductFilter = ({ onFilterChange }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [dropdownHeight, setDropdownHeight] = useState(0);
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get('/category');
+      setCategories(response.data);
 
+      setSelectedCategories((prev) => prev.filter((cat) => response.data.some((c) => c.name === cat)));
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      setCategories([]);
+    }
+  };
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("/category");
-        setCategories(response.data);
-
-        setSelectedCategories((prev) =>
-          prev.filter((cat) => response.data.some((c) => c.name === cat))
-        );
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        setCategories([]);
-      }
-    };
-
     fetchCategories();
   }, []);
 
-  
   useEffect(() => {
     if (dropdownOpen && dropdownContentRef.current) {
-    
       setTimeout(() => {
-        setDropdownHeight(dropdownContentRef.current.offsetHeight + 10); 
+        setDropdownHeight(dropdownContentRef.current.offsetHeight + 10);
       }, 10);
     } else {
       setDropdownHeight(0);
     }
   }, [dropdownOpen, categories]);
-
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -67,9 +60,9 @@ const ProductFilter = ({ onFilterChange }) => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
@@ -78,133 +71,125 @@ const ProductFilter = ({ onFilterChange }) => {
   };
 
   const handleCategoryChange = (value) => {
-    setSelectedCategories((prev) =>
-      prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]
-    );
+    setSelectedCategories((prev) => (prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]));
   };
 
   const applyFilters = () => {
     const params = new URLSearchParams();
-    if (search) params.append("search", search);
-    if (date) params.append("date", date);
-    if (condition.length) params.append("condition", condition.join(","));
-    if (selectedCategories.length) params.append("categories", selectedCategories.join(","));
-
-    navigate(`/category/${selectedCategories.length ? selectedCategories.join(",") : "All"}?${params.toString()}`);
-
-    onFilterChange({ search, date, condition, category: selectedCategories });
-
-    setIsFilterOpen(false); 
+    if (search) params.append('search', search);
+    if (date) params.append('date', date);
+    if (condition.length) params.append('condition', condition.join(','));
+    if (selectedCategories.length) params.append('categories', selectedCategories.join(','));
+    navigate(`/category/${selectedCategories.length ? selectedCategories.join(',') : 'All'}?${params.toString()}`);
+    onFilterChange({search, date, condition, category: selectedCategories});
+    setIsFilterOpen(false);
   };
 
   return (
     <>
-{!isFilterOpen && (
-  <div className="flex justify-end mx-4 my-4 md:hidden">
-    <button
-      className="bg-[#0f1c3c] text-white py-2 px-4 rounded-lg shadow-xl cursor-pointer"
-      onClick={() => setIsFilterOpen(true)}
-      style={{
-        transform: 'translateZ(0)',
-        willChange: 'transform',
-      }}
-    >
-     <FilterSVG/>
-    </button>
-  </div>
-)}
-
-
+      {!isFilterOpen && (
+        <div className='flex justify-end mx-4 my-4 md:hidden'>
+          <button
+            className='bg-[#0f1c3c] text-white py-2 px-4 rounded-lg shadow-xl cursor-pointer'
+            onClick={() => setIsFilterOpen(true)}
+            style={{
+              transform: 'translateZ(0)',
+              willChange: 'transform'
+            }}>
+            <FilterSVG />
+          </button>
+        </div>
+      )}
 
       <div
-        className={`fixed inset-0 bg-white bg-opacity-50 h-[500px] z-30 flex justify-end md:justify-start transition-transform duration-300 ${
-          isFilterOpen ? "translate-x-0 mt-15 h-[500px]" : "translate-x-full"
-        } md:translate-x-0 md:relative md:bg-transparent`}
-      >
-        <div className=" shadow-md rounded-lg p-4 w-full md:w-64 h-full md:h-full relative overflow-y-auto ">
+        className={`fixed inset-0 bg-white bg-opacity-50 h-auto z-30 flex justify-end md:justify-start transition-transform duration-300 ${
+          isFilterOpen ? 'translate-x-0 mt-15 h-[500px]' : 'translate-x-full'
+        } md:translate-x-0 md:relative md:bg-transparent`}>
+        <div className=' shadow-md rounded-lg p-4 w-full md:w-64 h-full md:h-full relative overflow-y-auto '>
           <button
-            className="absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-700 md:hidden z-50 cursor-pointer"
-            onClick={() => setIsFilterOpen(false)}
-          >
+            className='absolute top-4 right-4 text-2xl text-gray-500 hover:text-gray-700 md:hidden z-50 cursor-pointer'
+            onClick={() => setIsFilterOpen(false)}>
             ✕
           </button>
 
-          <h2 className="text-2xl font-bold mb-6 text-[#0f1c3c]">Filters</h2>
+          <h2 className='text-2xl font-bold mb-6 text-[#0f1c3c]'>Filters</h2>
 
-          <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700">Search</label>
+          <div className='mb-4'>
+            <label className='block text-sm font-semibold text-gray-700'>Search</label>
             <input
-              type="text"
+              type='text'
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#0f1c3c] outline-none"
-              placeholder="Enter product name"
+              className='w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#0f1c3c] outline-none'
+              placeholder='Enter product name'
             />
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700">Date</label>
+          <div className='mb-4'>
+            <label className='block text-sm font-semibold text-gray-700'>Date</label>
             <input
-              type="date"
+              type='date'
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#0f1c3c] outline-none"
+              className='w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#0f1c3c] outline-none'
             />
           </div>
 
-          <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Condition</label>
-            <div className="flex items-center gap-2">
+          <div className='mb-4'>
+            <label className='block text-sm font-semibold text-gray-700 mb-2'>Condition</label>
+            <div className='flex items-center gap-2'>
               <input
-                type="checkbox"
-                id="new"
-                checked={condition.includes("new")}
-                onChange={() => handleConditionChange("new")}
-                className="w-4 h-4 accent-[#0f1c3c] cursor-pointer"
+                type='checkbox'
+                id='new'
+                checked={condition.includes('new')}
+                onChange={() => handleConditionChange('new')}
+                className='w-4 h-4 accent-[#0f1c3c] cursor-pointer'
               />
-              <label htmlFor="new" className="text-sm text-gray-700 cursor-pointer">New</label>
+              <label htmlFor='new' className='text-sm text-gray-700 cursor-pointer'>
+                New
+              </label>
             </div>
-            <div className="flex items-center gap-2 mt-2">
+            <div className='flex items-center gap-2 mt-2'>
               <input
-                type="checkbox"
-                id="used"
-                checked={condition.includes("used")}
-                onChange={() => handleConditionChange("used")}
-                className="w-4 h-4 accent-[#0f1c3c] cursor-pointer"
+                type='checkbox'
+                id='used'
+                checked={condition.includes('used')}
+                onChange={() => handleConditionChange('used')}
+                className='w-4 h-4 accent-[#0f1c3c] cursor-pointer'
               />
-              <label htmlFor="used" className="text-sm text-gray-700 cursor-pointer">Used</label>
+              <label htmlFor='used' className='text-sm text-gray-700 cursor-pointer'>
+                Used
+              </label>
             </div>
           </div>
 
-          <div className="mb-4 relative" ref={dropdownRef}>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Categories</label>
+          <div className='mb-4 relative' ref={dropdownRef}>
+            <label className='block text-sm font-semibold text-gray-700 mb-2'>Categories</label>
             <div
-              className="w-full border border-gray-300 rounded-lg p-2 bg-white cursor-pointer flex justify-between items-center"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            >
-              <span className="text-gray-700 text-sm truncate">
-                {selectedCategories.length > 0 ? selectedCategories.join(", ") : "Select Categories"}
+              className='w-full border border-gray-300 rounded-lg p-2 bg-white cursor-pointer flex justify-between items-center'
+              onClick={() => setDropdownOpen(!dropdownOpen)}>
+              <span className='text-gray-700 text-sm truncate'>
+                {selectedCategories.length > 0 ? selectedCategories.join(', ') : 'Select Categories'}
               </span>
-              <span className="text-gray-500">&#9662;</span>
+              <span className='text-gray-500'>&#9662;</span>
             </div>
 
             {dropdownOpen && (
-              <div 
+              <div
                 ref={dropdownContentRef}
-                className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg z-10"
-              >
-                <div className="p-2 max-h-48 overflow-y-auto">
+                className='absolute top-full left-0 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg z-10'>
+                <div className='p-2 max-h-48 overflow-y-auto'>
                   {categories.map((category) => (
-                    <div key={category._id} className="flex items-center gap-2 mt-2">
+                    <div key={category._id} className='flex items-center gap-2 mt-2'>
                       <input
-                        type="checkbox"
+                        type='checkbox'
                         id={category._id}
                         value={category.name}
                         checked={selectedCategories.includes(category.name)}
                         onChange={() => handleCategoryChange(category.name)}
-                        className="w-4 h-4 accent-[#0f1c3c] cursor-pointer"
+                        className='w-4 h-4 accent-[#0f1c3c] cursor-pointer'
                       />
-                      <label htmlFor={category._id} className="text-sm text-gray-700 cursor-pointer">
+                      <label htmlFor={category._id} className='text-sm text-gray-700 cursor-pointer'>
                         {category.name}
                       </label>
                     </div>
@@ -213,13 +198,11 @@ const ProductFilter = ({ onFilterChange }) => {
               </div>
             )}
           </div>
-          
-          
-          <div style={{ marginTop: dropdownOpen ? `${dropdownHeight}px` : '16px' }}>
+
+          <div style={{marginTop: dropdownOpen ? `${dropdownHeight}px` : '16px'}}>
             <button
               onClick={applyFilters}
-              className="w-full bg-[#0f1c3c] text-white py-2 rounded-lg hover:bg-[#0d172e] transition "
-            >
+              className='w-full bg-[#0f1c3c] text-white py-2 rounded-lg hover:bg-[#0d172e] transition '>
               Apply Filters
             </button>
           </div>

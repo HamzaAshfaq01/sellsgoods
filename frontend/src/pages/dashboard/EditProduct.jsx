@@ -114,7 +114,6 @@ const EditProductScreen = () => {
     }
   };
   
-  // Function to handle removing a tag
   const handleRemoveTag = (index) => {
     setFormData((prev) => ({
       ...prev,
@@ -122,7 +121,7 @@ const EditProductScreen = () => {
     }));
   };
   
-  // Function to handle Enter key for adding tags
+  
   const handleTagKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
