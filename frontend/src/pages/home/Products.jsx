@@ -1,30 +1,31 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { AutoComplete, Input } from "antd";
-import axios from "../../axios";
-import ProductShimmers from "../../shimmers/ProductShimmers";
-import TiltCard from "../../components/TiltCard";
-import { Button, Result } from 'antd';
-import CategorySlider from "./CategorySlider";
+import {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {AutoComplete, Input} from 'antd';
+import axios from '../../axios';
+import ProductShimmers from '../../shimmers/ProductShimmers';
+import TiltCard from '../../components/TiltCard';
+import {Button, Result} from 'antd';
+import CategorySlider from './CategorySlider';
+import {MapPin, Tag} from 'lucide-react';
 
 const ProductCard = () => {
   const [categories, setCategories] = useState([]);
   const [productsByCategory, setProductsByCategory] = useState({});
   const [loading, setLoading] = useState(true);
   const [imageIndexes, setImageIndexes] = useState({});
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState('');
   const [cityOptions, setCityOptions] = useState([]);
-  const [cityInput, setCityInput] = useState("");
+  const [cityInput, setCityInput] = useState('');
   const [noResults, setNoResults] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
-      if (cityInput.trim() !== "") {
+      if (cityInput.trim() !== '') {
         setCity(cityInput);
       } else {
-        setCity("");
+        setCity('');
       }
     }, 3000);
 
@@ -32,20 +33,18 @@ const ProductCard = () => {
   }, [cityInput]);
 
   useEffect(() => {
-    const fetchProducts = async (selectedCity = "") => {
+    const fetchProducts = async (selectedCity = '') => {
       setLoading(true);
       setNoResults(false);
       try {
         const response = await axios.get(
-          selectedCity ? `/products/getproducts?city=${selectedCity}` : "/products/getproducts"
+          selectedCity ? `/products/getproducts?city=${selectedCity}` : '/products/getproducts'
         );
 
         const productsByCategory = response.data.productsByCategory || {};
         const categories = response.data.categories || [];
 
-        const hasProducts = Object.values(productsByCategory).some(
-          (products) => products.length > 0
-        );
+        const hasProducts = Object.values(productsByCategory).some((products) => products.length > 0);
 
         if (!hasProducts) {
           setProductsByCategory({});
@@ -66,9 +65,9 @@ const ProductCard = () => {
         });
 
         const uniqueCities = [...new Set(cities)];
-        setCityOptions(uniqueCities.map((city) => ({ value: city })));
+        setCityOptions(uniqueCities.map((city) => ({value: city})));
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error('Error fetching products:', error);
         if (error.response && error.response.status === 404) {
           setProductsByCategory({});
           setCategories([]);
@@ -84,18 +83,18 @@ const ProductCard = () => {
 
   useEffect(() => {
     const checkHashAndScroll = () => {
-      const hash = window.location.hash.replace("#category-", "");
+      const hash = window.location.hash.replace('#category-', '');
       if (hash && !loading && categories.length > 0) {
         const targetId = `category-${hash}`;
         const targetElement = document.getElementById(targetId);
-        
+
         if (targetElement) {
           setTimeout(() => {
             const headerHeight = 100;
             const elementTop = targetElement.getBoundingClientRect().top + window.scrollY;
             window.scrollTo({
               top: elementTop - headerHeight,
-              behavior: "smooth"
+              behavior: 'smooth'
             });
           }, 300);
         }
@@ -103,8 +102,8 @@ const ProductCard = () => {
     };
 
     checkHashAndScroll();
-    window.addEventListener("hashchange", checkHashAndScroll);
-    return () => window.removeEventListener("hashchange", checkHashAndScroll);
+    window.addEventListener('hashchange', checkHashAndScroll);
+    return () => window.removeEventListener('hashchange', checkHashAndScroll);
   }, [loading, categories]);
 
   const getCurrentImageIndex = (productId) => imageIndexes[productId] || 0;
@@ -112,14 +111,14 @@ const ProductCard = () => {
   const prevImage = (productId) => {
     setImageIndexes((prev) => ({
       ...prev,
-      [productId]: prev[productId] > 0 ? prev[productId] - 1 : 0,
+      [productId]: prev[productId] > 0 ? prev[productId] - 1 : 0
     }));
   };
 
   const nextImage = (productId, imagesLength) => {
     setImageIndexes((prev) => ({
       ...prev,
-      [productId]: prev[productId] < imagesLength - 1 ? prev[productId] + 1 : imagesLength - 1,
+      [productId]: prev[productId] < imagesLength - 1 ? prev[productId] + 1 : imagesLength - 1
     }));
   };
 
@@ -132,136 +131,127 @@ const ProductCard = () => {
   }
 
   return (
-    <div className="max-w-[2000px] mx-auto px-4 sm:px-12">
-<div className="grid grid-cols-2 gap-4 items-center mb-6 mt-4">
+    <div className='max-w-[2000px] mx-auto px-4 sm:px-12'>
+      <div className='grid grid-cols-2 gap-4 items-center mb-6 mt-4'>
+        <div className='w-full order-1 md:order-1 md:col-span-1 col-span-2'>
+          <h2 className='text-xl text-[#0f1c3c] font-bold mb-1'>
+            Explore various product categories tailored to your interests.
+          </h2>
+        </div>
 
-  <div className="w-full order-1 md:order-1 md:col-span-1 col-span-2">
-    <h2 className="text-xl text-[#0f1c3c] font-bold mb-1">
-      Explore various product categories tailored to your interests.
-    </h2>
-  </div>
+        <div className='w-full md:col-span-1 col-span-2 order-3 md:order-2 mb-1 flex justify-end'>
+          <AutoComplete
+            options={cityOptions}
+            style={{width: '100%', maxWidth: 3500}}
+            value={cityInput}
+            onChange={setCityInput}
+            onSelect={(value) => {
+              setCityInput(value);
+              setCity(value);
+            }}
+            placeholder='Search by city...'
+            allowClear>
+            <Input
+              onPressEnter={handleSearchTrigger}
+              suffix={
+                <span onClick={handleSearchTrigger} style={{cursor: 'pointer', color: '#0f1c3c', fontWeight: 600}}>
+                  Search
+                </span>
+              }
+            />
+          </AutoComplete>
+        </div>
 
-
-  <div className="w-full md:col-span-1 col-span-2 order-3 md:order-2 mb-1 flex justify-end">
-    <AutoComplete
-      options={cityOptions}
-      style={{ width: '100%', maxWidth: 3500 }}
-      value={cityInput}
-      onChange={setCityInput}
-      onSelect={(value) => {
-        setCityInput(value);
-        setCity(value);
-      }}
-      placeholder="Search by city..."
-      allowClear
-    >
-      <Input
-        onPressEnter={handleSearchTrigger}
-        suffix={
-          <span
-            onClick={handleSearchTrigger}
-            style={{ cursor: "pointer", color: "#0f1c3c", fontWeight: 600 }}
-          >
-            Search
-          </span>
-        }
-      />
-    </AutoComplete>
-  </div>
-
-
-  <div className="w-full col-span-2 order-2 md:order-3">
-    <CategorySlider />
-  </div>
-</div>
+        <div className='w-full col-span-2 order-2 md:order-3'>
+          <CategorySlider />
+        </div>
+      </div>
 
       {categories.map((category) => {
-        const normalizedCategory = category
-          .trim()
-          .toLowerCase()
-          .replace(/\s+/g, "-");
+        const normalizedCategory = category.trim().toLowerCase().replace(/\s+/g, '-');
 
         return (
-          <div
-            id={`category-${normalizedCategory}`}
-            key={normalizedCategory}
-            className="mb-8"
-          >
-            <h2 className="text-xl font-bold mb-4">{category}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div id={`category-${normalizedCategory}`} key={normalizedCategory} className='mb-8'>
+            <h2 className='text-xl font-bold mb-4'>{category}</h2>
+            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
               {productsByCategory[category]?.slice(0, 4).map((product) => (
                 <TiltCard
                   key={product.id || product._id}
-                  className="bg-white rounded-lg shadow-lg group transition duration-300 ease-in-out"
-                >
+                  className='bg-white rounded-lg group transition duration-300 ease-in-out'>
                   <div
                     onClick={() => navigate(`/productdetails/${product._id}/view`)}
-                    className="relative rounded-lg shadow-lg p-4 block hover:shadow-xl transition cursor-pointer group"
-                  >
+                    className='relative rounded-2xl shadow-sm p-4 bg-white hover:shadow-xl transition-all duration-300 cursor-pointer group transform hover:scale-[1.02]'>
                     <img
                       src={`http://localhost:5000/${product.images?.[getCurrentImageIndex(product._id)]}`}
                       alt={product.title}
-                      className="w-full h-48 object-cover rounded-t-lg"
+                      className='w-full h-52 object-cover rounded-xl'
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = 'https://i0.wp.com/port2flavors.com/wp-content/uploads/2022/07/placeholder-614.png?fit=1200%2C800&ssl=1';
+                        e.target.src =
+                          'https://i0.wp.com/port2flavors.com/wp-content/uploads/2022/07/placeholder-614.png?fit=1200%2C800&ssl=1';
                       }}
                     />
+
                     {product?.images?.length > 1 && (
                       <>
-                        <div className="absolute bottom-0 right-0 bg-black bg-opacity-60 text-white text-xs px-1.5 py-0.5 rounded-tl-md">
-                          {getCurrentImageIndex(product._id) + 1}/{product?.images?.length}
+                        <div className='absolute bottom-0 right-0 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded-tl-lg'>
+                          {getCurrentImageIndex(product._id) + 1}/{product.images.length}
                         </div>
-                        <div className="absolute inset-0 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className='absolute inset-0 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity'>
                           <button
-                            type="button"
+                            type='button'
                             onClick={(e) => {
                               e.stopPropagation();
                               prevImage(product._id);
                             }}
-                            className="bg-black bg-opacity-50 text-white p-1 rounded-full ml-1 hover:bg-opacity-70"
-                          >
+                            className='bg-black bg-opacity-50 text-white p-2 rounded-full ml-2 hover:bg-opacity-70'>
                             <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-3 w-3"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
+                              xmlns='http://www.w3.org/2000/svg'
+                              className='h-3 w-3'
+                              viewBox='0 0 20 20'
+                              fill='currentColor'>
                               <path
-                                fillRule="evenodd"
-                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                clipRule="evenodd"
+                                fillRule='evenodd'
+                                d='M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z'
+                                clipRule='evenodd'
                               />
                             </svg>
                           </button>
                           <button
-                            type="button"
+                            type='button'
                             onClick={(e) => {
                               e.stopPropagation();
                               nextImage(product._id, product.images.length);
                             }}
-                            className="bg-black bg-opacity-50 text-white p-1 rounded-full mr-1 hover:bg-opacity-70"
-                          >
+                            className='bg-black bg-opacity-50 text-white p-2 rounded-full mr-2 hover:bg-opacity-70'>
                             <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-3 w-3"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
+                              xmlns='http://www.w3.org/2000/svg'
+                              className='h-3 w-3'
+                              viewBox='0 0 20 20'
+                              fill='currentColor'>
                               <path
-                                fillRule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clipRule="evenodd"
+                                fillRule='evenodd'
+                                d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
+                                clipRule='evenodd'
                               />
                             </svg>
                           </button>
                         </div>
                       </>
                     )}
-                    <p className="text-lg font-bold text-[#0f1c3c] mt-3">PKR {product.price}</p>
-                    <h3 className="text-md font-semibold">{product.title}</h3>
-                    <p className="mt-2">{`${product.location?.area}, ${product.location?.city}`}</p>
-                    <p className="text-gray-600 text-sm mt-2">{product?.shortDesc}</p>
+
+                    <div className='mt-4 space-y-1'>
+                      <div className='flex items-center gap-2 text-[#0f1c3c] font-semibold'>
+                        <Tag className='h-4 w-4 text-green-600' />
+                        <span className='text-md'>PKR {product.price}</span>
+                      </div>
+                      <h3 className='text-lg font-bold text-gray-800'>{product.title}</h3>
+                      <div className='flex items-center gap-2 text-gray-600 text-sm'>
+                        <MapPin className='h-4 w-4' />
+                        <span>{`${product.location?.area}, ${product.location?.city}`}</span>
+                      </div>
+                      <p className='text-gray-500 text-sm line-clamp-2'>{product?.shortDesc}</p>
+                    </div>
                   </div>
                 </TiltCard>
               ))}
@@ -269,8 +259,7 @@ const ProductCard = () => {
             {productsByCategory[category]?.length > 4 && (
               <button
                 onClick={() => navigate(`/category/${category}?categories=${encodeURIComponent(category)}`)}
-                className="mt-4 px-4 py-2 bg-[#0f1c3c] text-white font-semibold rounded-lg hover:bg-[#122850] transition cursor-pointer"
-              >
+                className='mt-4 px-4 py-2 bg-[#0f1c3c] text-white font-semibold rounded-lg hover:bg-[#122850] transition cursor-pointer'>
                 See More
               </button>
             )}
@@ -280,10 +269,10 @@ const ProductCard = () => {
 
       {noResults && (
         <Result
-        status="404"
-        title="404"
-        subTitle="Apologies, the results for this city are not available. Please try searching again."
-      />
+          status='404'
+          title='404'
+          subTitle='Apologies, the results for this city are not available. Please try searching again.'
+        />
       )}
     </div>
   );
