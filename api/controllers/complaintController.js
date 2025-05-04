@@ -1,8 +1,7 @@
 import asyncHandler from "../middleware/asyncHandler.js";
 import Complaint from "../models/complaintModel.js";
 import mongoose from "mongoose";
-import  Order from "../models/orderModel.js";
-
+import Order from "../models/orderModel.js";
 
 const orderPopulate = {
   path: "order",
@@ -23,12 +22,10 @@ const orderPopulate = {
   ],
 };
 
-
 const reportedByPopulate = {
   path: "reportedBy",
   select: "name email",
 };
-
 
 async function fetchFullComplaint(id) {
   return await Complaint.findById(id)
@@ -40,17 +37,16 @@ async function fetchFullComplaint(id) {
 const getComplaints = asyncHandler(async (req, res) => {
   console.log("hello>>>>");
   const userId = req.user._id;
-  const { page = 1, limit = 10 } = req.query;  
+  const { page = 1, limit = 10 } = req.query;
 
   console.log("User ID: ", req.user._id);
 
-  const skip = (page - 1) * limit;  
-  const limitNum = parseInt(limit, 10);  
+  const skip = (page - 1) * limit;
+  const limitNum = parseInt(limit, 10);
 
   let complaints;
   let totalComplaints;
-  
-  
+
   if (req.user.role === "admin") {
     complaints = await Complaint.find()
       .populate(orderPopulate)
@@ -59,11 +55,8 @@ const getComplaints = asyncHandler(async (req, res) => {
       .skip(skip)
       .limit(limitNum);
 
-    totalComplaints = await Complaint.countDocuments();  
-  }
-  
-  
-  else if (req.user.role === "buyer") {
+    totalComplaints = await Complaint.countDocuments();
+  } else if (req.user.role === "buyer") {
     complaints = await Complaint.find({ reportedBy: userId })
       .populate(orderPopulate)
       .populate(reportedByPopulate)
@@ -71,11 +64,8 @@ const getComplaints = asyncHandler(async (req, res) => {
       .skip(skip)
       .limit(limitNum);
 
-    totalComplaints = await Complaint.countDocuments({ reportedBy: userId }); 
-  }
-  
-
-  else if (req.user.role === "seller") {
+    totalComplaints = await Complaint.countDocuments({ reportedBy: userId });
+  } else if (req.user.role === "seller") {
     complaints = await Complaint.find({ sellerId: userId })
       .populate(orderPopulate)
       .populate(reportedByPopulate)
@@ -83,17 +73,15 @@ const getComplaints = asyncHandler(async (req, res) => {
       .skip(skip)
       .limit(limitNum);
 
-    totalComplaints = await Complaint.countDocuments({ sellerId: userId });  
+    totalComplaints = await Complaint.countDocuments({ sellerId: userId });
   }
 
-  
   if (complaints.length === 0) {
-    return res.status(404).json({ message: "No complaints found." });
+    return res.json({ complaints: [], pagination: { totalPages: 0 } });
   }
 
-  const totalPages = Math.ceil(totalComplaints / limitNum);  
+  const totalPages = Math.ceil(totalComplaints / limitNum);
 
-  
   res.status(200).json({
     complaints,
     pagination: {
@@ -105,12 +93,6 @@ const getComplaints = asyncHandler(async (req, res) => {
   });
 });
 
-  
-  
-  
-  
-
-
 const createComplaint = asyncHandler(async (req, res) => {
   const { order, reason } = req.body;
 
@@ -118,15 +100,23 @@ const createComplaint = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Order and reason are required." });
   }
 
-  const orderDetails = await Order.findById(order).populate('items.productId', 'title price image sellerId');
+  const orderDetails = await Order.findById(order).populate(
+    "items.productId",
+    "title price image sellerId"
+  );
   console.log("Order Details:", orderDetails);
-  
+
   if (!orderDetails) {
     return res.status(404).json({ message: "Order not found." });
   }
 
-  if (!orderDetails.buyerId || orderDetails.buyerId.toString() !== req.user._id.toString()) {
-    return res.status(403).json({ message: "You are not authorized to file a complaint for this order." });
+  if (
+    !orderDetails.buyerId ||
+    orderDetails.buyerId.toString() !== req.user._id.toString()
+  ) {
+    return res.status(403).json({
+      message: "You are not authorized to file a complaint for this order.",
+    });
   }
 
   const sellerId = orderDetails.sellerId;
@@ -139,15 +129,12 @@ const createComplaint = asyncHandler(async (req, res) => {
     reason,
     reportedBy: req.user._id,
     sellerId,
-    images, 
+    images,
   });
 
   console.log("Complaint Created:", complaint);
   res.status(201).json(complaint);
 });
-
-  
-  
 
 const getComplaintById = asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -162,7 +149,6 @@ const getComplaintById = asyncHandler(async (req, res) => {
 
   res.status(200).json(complaint);
 });
-
 
 const updateComplaint = asyncHandler(async (req, res) => {
   const { id } = req.params;

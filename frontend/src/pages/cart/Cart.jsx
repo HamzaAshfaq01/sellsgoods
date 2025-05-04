@@ -11,14 +11,16 @@ const Cart = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const handleQuantityChange = (productId, newQuantity) => {
-    const updatedCart = cart.map(item =>
-      item.id === productId ? { ...item, quantity: Math.max(1, newQuantity) } : item
+    const updatedCart = cart.map((item) =>
+      item.id === productId
+        ? { ...item, quantity: Math.max(1, newQuantity) }
+        : item
     );
     updateCart(updatedCart);
   };
 
   const removeItem = (productId) => {
-    const updatedCart = cart.filter(item => item.id !== productId);
+    const updatedCart = cart.filter((item) => item.id !== productId);
     updateCart(updatedCart);
   };
 
@@ -32,14 +34,14 @@ const Cart = () => {
       navigate("/login");
       return;
     }
-  
+
     const buyerId = user?.id || user?._id;
     if (!buyerId) {
       toast.error("User ID is missing. Please log in again.");
       return;
     }
-  
-    const items = cart.map(item => ({
+
+    const items = cart.map((item) => ({
       productId: item.id,
       title: item.title,
       quantity: item.quantity,
@@ -47,13 +49,13 @@ const Cart = () => {
       image: item.image,
       sellerId: item.sellerId,
     }));
-  
-    if (items.some(item => !item.sellerId)) {
+
+    if (items.some((item) => !item.sellerId)) {
       console.error("Missing sellerId in some items:", items);
       toast.error("Some products are missing seller information. Try again.");
       return;
     }
-  
+
     const orderData = {
       buyerId,
       sellerId: items[0].sellerId,
@@ -68,22 +70,18 @@ const Cart = () => {
       status: "Pending",
       paymentMethod, // include this field in the order
     };
-  
+
     console.log("Order Data Before Sending:", orderData);
-  
+
     if (paymentMethod === "COD") {
       try {
-        const { data, status } = await axios.post(
-          `/orders`,
-          orderData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
-        );
-  
+        const { data, status } = await axios.post(`/orders`, orderData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+
         if (status === 201) {
           toast.success("Order placed successfully!");
           updateCart([]);
@@ -97,14 +95,14 @@ const Cart = () => {
       navigate("/jazzcash-checkout", { state: orderData });
     }
   };
-  
-  
 
   if (cart.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">Your cart is empty</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">
+            Your cart is empty
+          </h1>
           <Link
             to="/"
             className="bg-[#0f1c3c] text-white px-6 py-3 rounded-lg hover:bg-[#162b5b] transition-colors"
@@ -119,19 +117,28 @@ const Cart = () => {
   return (
     <div className="min-h-screen p-4 md:p-8 max-w-[2000px] mx-auto">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Shopping Cart</h1>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 col-span-1 space-y-6">
           {cart.map((item) => (
-            <div key={item.id} className="bg-white rounded-lg shadow-md p-6 flex gap-6">
+            <div
+              key={item.id}
+              className="bg-white rounded-lg shadow-md p-6 flex gap-6"
+            >
               <img
-                src={item.image ? `${import.meta.env.VITE_API_SERVER_UPLOADS}${item.image}` : '/placeholder.svg'}
+                src={
+                  item.image
+                    ? `${import.meta.env.VITE_API_SERVER_UPLOADS}${item.image}`
+                    : "/placeholder.svg"
+                }
                 alt={item.title}
                 className="w-full max-w-32 h-32 object-contain rounded-lg"
               />
               <div className="flex-1">
                 <div className="flex justify-between items-start mb-2">
-                  <h2 className="text-xl font-semibold text-gray-800">{item.title}</h2>
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    {item.title}
+                  </h2>
                   <button
                     onClick={() => removeItem(item.id)}
                     className="text-red-500 hover:text-red-700"
@@ -139,18 +146,22 @@ const Cart = () => {
                     Remove
                   </button>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <button
-                      onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                      onClick={() =>
+                        handleQuantityChange(item.id, item.quantity - 1)
+                      }
                       className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
                     >
                       -
                     </button>
                     <span className="text-lg font-medium">{item.quantity}</span>
                     <button
-                      onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                      onClick={() =>
+                        handleQuantityChange(item.id, item.quantity + 1)
+                      }
                       className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
                     >
                       +
@@ -160,7 +171,9 @@ const Cart = () => {
                     <p className="text-xl font-bold text-gray-800">
                       PKR {(item.price * item.quantity).toLocaleString()}
                     </p>
-                    <p className="text-gray-500">PKR {item.price.toLocaleString()} each</p>
+                    <p className="text-gray-500">
+                      PKR {item.price.toLocaleString()} each
+                    </p>
                   </div>
                 </div>
               </div>
@@ -168,22 +181,32 @@ const Cart = () => {
           ))}
         </div>
 
-    
         <div className="bg-white rounded-lg shadow-md p-6 h-fit sticky top-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Order Summary</h2>
-          
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            Order Summary
+          </h2>
+
           <div className="space-y-4 mb-8">
             <div className="flex justify-between">
-              <span className="text-gray-600">Subtotal ({cart.reduce((acc, item) => acc + item.quantity, 0)} items)</span>
-              <span className="font-medium">PKR {calculateTotal().toLocaleString()}</span>
+              <span className="text-gray-600">
+                Subtotal ({cart.reduce((acc, item) => acc + item.quantity, 0)}{" "}
+                items)
+              </span>
+              <span className="font-medium">
+                PKR {calculateTotal().toLocaleString()}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Taxes (10%)</span>
-              <span className="font-medium">PKR {(calculateTotal() * 0.1).toLocaleString()}</span>
+              <span className="font-medium">
+                PKR {(calculateTotal() * 0.1).toLocaleString()}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Shipping</span>
-              <span className="font-medium">PKR {(calculateTotal() * 0.05).toLocaleString()}</span>
+              <span className="font-medium">
+                PKR {(calculateTotal() * 0.05).toLocaleString()}
+              </span>
             </div>
           </div>
 
@@ -195,29 +218,28 @@ const Cart = () => {
               </span>
             </div>
             <div className="mb-6">
-  <h3 className="font-semibold mb-2">Select Payment Method</h3>
-  <div className="flex gap-4">
-    <label className="flex items-center gap-2">
-      <input
-        type="radio"
-        value="COD"
-        checked={paymentMethod === "COD"}
-        onChange={(e) => setPaymentMethod(e.target.value)}
-      />
-      Cash on Delivery
-    </label>
-    <label className="flex items-center gap-2">
-      <input
-        type="radio"
-        value="JazzCash"
-        checked={paymentMethod === "JazzCash"}
-        onChange={(e) => setPaymentMethod(e.target.value)}
-      />
-      JazzCash (Online)
-    </label>
-  </div>
-</div>
-
+              <h3 className="font-semibold mb-2">Select Payment Method</h3>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    value="COD"
+                    checked={paymentMethod === "COD"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  />
+                  Cash on Delivery
+                </label>
+                {/* <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    value="JazzCash"
+                    checked={paymentMethod === "JazzCash"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  />
+                  JazzCash (Online)
+                </label> */}
+              </div>
+            </div>
 
             <button
               className="w-full bg-[#0f1c3c] text-white py-3 rounded-lg hover:bg-[#162b5b] transition-colors"
